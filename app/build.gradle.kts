@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "com.chelsea.fyta"
-        minSdk = 21
-        targetSdk = 36
+        minSdk = 23
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -55,4 +55,11 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    //Navigation
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
+
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended")
 }
