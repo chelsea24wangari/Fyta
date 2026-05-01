@@ -62,4 +62,11 @@ dependencies {
 
     // Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Route Maps
+    implementation("com.google.maps.android:maps-compose:4.3.0")
+
+    // Lazy Grid
+    implementation("androidx.compose.foundation:foundation:1.6.0")
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
 }

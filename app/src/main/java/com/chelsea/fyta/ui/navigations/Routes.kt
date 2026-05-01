@@ -1,11 +1,19 @@
 package com.chelsea.fyta.ui.navigations
 
-
 const val ROUT_ABOUT = "about"
 const val ROUT_LOGIN = "login"
 const val ROUT_REGISTER = "register"
 const val ROUT_HOME = "home"
 const val ROUT_ONBOARDING = "onboarding"
 const val ROUT_SPLASH = "splash"
-const val ROUT_STEPTRACKER = "splash"
+const val ROUT_STEPTRACKER = "steptracker"
+const val ROUT_CALORIETRACKER = "calorietracker"
+const val ROUT_STREAK = "streak"
+const val ROUT_GOAL = "goal"
+const val ROUT_LOCATION = "location"
+const val ROUT_NOTIFICATION = "notification"
+const val ROUT_PROGRESS = "progress"
+const val ROUT_SETTINGS = "settings"
+const val ROUT_CHALLENGE = "challenge"
+const val ROUT_WORKOUT = "workout"
 const val ROUT_SCAFFOLD = "scaffold"

@@ -3,6 +3,7 @@ package com.chelsea.fyta.ui.screens.steptracker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,24 +16,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.chelsea.fyta.ui.theme.Purple20
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_STEPTRACKER
 import com.chelsea.fyta.ui.theme.Purple40
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun StepTrackerScreen(navController: NavController) {
     Scaffold(
-        bottomBar = {
-            BottomNavBar()
-        }
+        bottomBar = { BottomNavBar(navController) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -41,258 +49,356 @@ fun StepTrackerScreen(navController: NavController) {
                 .background(Color(0xFFFBFBFB))
                 .verticalScroll(rememberScrollState())
         ) {
-            TopBar()
+            TopBar(navController)
+
+            DateSelector()
+
             StepSummaryCard()
+
             RouteSection()
-            StepsChart()
+
+            StepsOverviewSection()
+
             StatsRow()
+
             AchievementsSection()
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-fun TopBar() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
+fun TopBar(navController: NavController) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+        }
+        Text(
+            text = "Step Tracker",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Box(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(end = 8.dp)
+                .size(40.dp)
+                .background(Purple40.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = { /* TODO */ }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.Black)
-            }
-            Text(
-                text = "Step Tracker",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
             Icon(
                 Icons.Default.CalendarToday,
-                contentDescription = null,
+                contentDescription = "Calendar",
                 tint = Purple40,
-                modifier = Modifier
-                    .size(36.dp)
-                    .background(Purple40.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
-                    .padding(8.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.ChevronLeft, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = Purple40, modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = "Today, May 20", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
-        }
+@Composable
+fun DateSelector() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            Icons.Default.ChevronLeft,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(28.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            Icons.Default.CalendarMonth,
+            contentDescription = null,
+            tint = Purple40,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = "Today, May 20",
+            color = Purple40,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Icon(
+            Icons.Default.ChevronRight,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(28.dp)
+        )
     }
 }
 
 @Composable
 fun StepSummaryCard() {
+
+
     Card(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(32.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
+
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
+
         ) {
+
+
             // Circular Progress
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(150.dp)) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(140.dp)) {
                 CircularProgressIndicator(
                     progress = { 0.84f },
-                    strokeWidth = 10.dp,
+                    strokeWidth = 12.dp,
                     color = Purple40,
                     trackColor = Color(0xFFF0F0F0),
+                    strokeCap = StrokeCap.Round,
                     modifier = Modifier.fillMaxSize()
                 )
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
+
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.DirectionsWalk, contentDescription = null, tint = Purple20, modifier = Modifier.size(28.dp))
-                    Text("8,420", fontSize = 26.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Steps", color = Color.Gray, fontSize = 14.sp)
-                    Text("Goal: 10,000", fontSize = 12.sp, color = Color.LightGray)
+
+                    Icon(
+                        Icons.AutoMirrored.Filled.DirectionsWalk,
+                        contentDescription = null,
+                        tint = Purple40,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                    Text("8,420", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+
+                    Text("Steps", color = Color.Gray, fontSize = 12.sp)
+
+                    Text("Goal: 10,000", color = Color.Gray, fontSize = 11.sp)
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(20.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    DetailedStatItem(Icons.Default.LocationOn, "Distance", "6.24", "km", modifier = Modifier.weight(1f), iconColor = Color.Magenta)
-                    VerticalDivider(modifier = Modifier.height(40.dp).padding(vertical = 4.dp), color = Color(0xFFEEEEEE))
-                    DetailedStatItem(Icons.Default.LocalFireDepartment, "Calories", "520", "kcal", modifier = Modifier.weight(1f), iconColor = Color.Yellow)
-                }
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color(0xFFEEEEEE))
-                DetailedStatItem(Icons.Default.AccessTime, "Active Time", "1h 12m", "mins", modifier = Modifier.fillMaxWidth(), iconColor = Color.Green)
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DetailedStatItem(Icons.Default.LocationOn, "Distance", "6.24", "km", Color(0xFF6C4EF6))
+                DetailedStatItem(Icons.Default.Whatshot, "Calories Burned", "520", "kcal", Color(0xFFFF7043))
+                DetailedStatItem(Icons.Default.Timer, "Active Time", "1h 12m", "mins", Color.Blue)
             }
         }
     }
 }
 
 @Composable
-fun DetailedStatItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    value: String,
-    unit: String,
-    modifier: Modifier = Modifier,
-    iconColor: Color = Purple40
-) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+fun DetailedStatItem(icon: ImageVector, title: String, value: String, unit: String, iconColor: Color) {
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+
         Box(
             modifier = Modifier
-                .size(32.dp)
-                .background(iconColor.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
+                .size(36.dp)
+                .background(iconColor.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
+
         ) {
+
             Icon(icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(18.dp))
         }
-        Spacer(modifier = Modifier.width(8.dp))
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+
         Column {
-            Text(title, color = Color.Gray, fontSize = 10.sp)
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Text(unit, fontSize = 10.sp, color = Color.Gray)
+
+            Text(title, fontSize = 11.sp, color = Color.Gray)
+
+            Row(verticalAlignment = Alignment.Bottom) {
+
+                Text(value, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+
+                Text(unit, fontSize = 11.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 2.dp))
+
+            }
         }
     }
 }
 
 @Composable
 fun RouteSection() {
+
+    var isGpsOn by remember { mutableStateOf(true) }
+
     Column(modifier = Modifier.padding(16.dp)) {
+
+        // 🔝 Title Row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Your Route", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
+
+            Text("Your Route", fontWeight = FontWeight.Bold)
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("GPS", color = Color.Gray, fontSize = 12.sp)
-                Spacer(modifier = Modifier.width(4.dp))
+                Text("GPS", color = Color.Gray)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 Switch(
-                    checked = true,
-                    onCheckedChange = {},
+                    checked = isGpsOn,
+                    onCheckedChange = { isGpsOn = it },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF4CAF50),
-                        uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color.LightGray,
-                        checkedBorderColor = Color.Transparent,
-                        uncheckedBorderColor = Color.Transparent
-                    ),
-                    modifier = Modifier.scale(0.7f)
+                        checkedTrackColor = Color(0xFF4CAF50)
+                    )
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 🗺️ Google Map
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(
+                LatLng(-1.286389, 36.817223), // Nairobi example
+                14f
+            )
+        }
 
         Box(
             modifier = Modifier
-                .height(180.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
-                .background(Color(0xFFF5F5F5)),
-            contentAlignment = Alignment.Center
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp))
         ) {
-            Text("Map View (Google Maps)", color = Color.LightGray)
-            Icon(
-                Icons.Default.OpenInFull,
-                contentDescription = null,
+
+            GoogleMap (
+                modifier = Modifier.matchParentSize(),
+                cameraPositionState = cameraPositionState
+            ) {
+
+                // Start marker
+                Marker(
+                    state = MarkerState(position = LatLng(-1.286389, 36.817223)),
+                    title = "Start"
+                )
+
+                // End marker
+                Marker(
+                    state = MarkerState(position = LatLng(-1.280000, 36.820000)),
+                    title = "End"
+                )
+
+                // Route line
+                Polyline(
+                    points = listOf(
+                        LatLng(-1.286389, 36.817223),
+                        LatLng(-1.284000, 36.819000),
+                        LatLng(-1.282000, 36.821000),
+                        LatLng(-1.280000, 36.820000)
+                    ),
+                    color = Color(0xFF6C4EF6),
+                    width = 8f
+                )
+            }
+
+            GoogleMap(
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(12.dp)
-                    .size(24.dp)
-                    .background(Color.White, RoundedCornerShape(8.dp))
-                    .padding(4.dp),
-                tint = Color.Black
+                    .fillMaxWidth()
+                    .height(200.dp),
+                cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(
+                        LatLng(-1.286389, 36.817223),
+                        14f
+                    )
+                }
             )
         }
     }
 }
 
 @Composable
-fun StepsChart() {
+fun StepsOverviewSection() {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Steps Overview", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
-
+        Text("Steps Overview", fontWeight = FontWeight.Bold, fontSize = 18.sp)
         Spacer(modifier = Modifier.height(16.dp))
-
-        Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
-            // Y-axis
-            Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
-                listOf("10K", "8K", "6K", "4K", "2K", "0").forEach {
-                    Text(it, color = Color.LightGray, fontSize = 10.sp)
-                }
-            }
-
-            // Chart area
-            Box(modifier = Modifier.fillMaxSize().padding(start = 32.dp, bottom = 20.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    val steps = listOf(2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 25)
-                    steps.forEach {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 2.dp)
-                                .fillMaxHeight(it / 30f)
-                                .background(
-                                    Brush.verticalGradient(listOf(Purple40, Purple40.copy(alpha = 0.4f))),
-                                    RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
-                                )
-                        )
-                    }
-                }
-                
-                // Tooltip
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(x = (-20).dp, y = 40.dp)
-                        .background(Purple40, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("9 AM - 10 AM", color = Color.White, fontSize = 9.sp)
-                        Text("1,250 steps", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    }
+        
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+        ) {
+            // Simple Bar Chart Visualization
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                val stepData = listOf(0.1f, 0.15f, 0.2f, 0.4f, 0.6f, 0.5f, 0.7f, 0.8f, 0.9f, 0.85f, 0.95f, 0.8f, 0.9f, 1.0f, 0.85f, 0.95f)
+                stepData.forEachIndexed { index, height ->
+                    Box(
+                        modifier = Modifier
+                            .width(12.dp)
+                            .fillMaxHeight(height)
+                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                            .background(
+                                if (index == 5) Purple40 else Purple40.copy(alpha = 0.5f)
+                            )
+                    )
                 }
             }
             
-            // X-axis
-            Row(
-                modifier = Modifier.align(Alignment.BottomEnd).fillMaxWidth().padding(start = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Tooltip popup mock
+            Box(
+                modifier = Modifier
+                    .offset(x = 60.dp, y = 40.dp)
+                    .background(Purple40, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                listOf("12 AM", "6 AM", "12 PM", "6 PM", "12 AM").forEach {
-                    Text(it, color = Color.LightGray, fontSize = 10.sp)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("9 AM - 10 AM", color = Color.White, fontSize = 10.sp)
+                    Text("1,250 steps", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
+        
+        // Time Labels
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("12 AM", fontSize = 10.sp, color = Color.Gray)
+            Text("6 AM", fontSize = 10.sp, color = Color.Gray)
+            Text("12 PM", fontSize = 10.sp, color = Color.Gray)
+            Text("6 PM", fontSize = 10.sp, color = Color.Gray)
+            Text("12 AM", fontSize = 10.sp, color = Color.Gray)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -300,9 +406,9 @@ fun StepsChart() {
 fun StatsRow() {
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         EnhancedSmallStatCard(Icons.AutoMirrored.Filled.DirectionsWalk, "Avg. Steps / Min", "116", "steps", Modifier.weight(1f))
         EnhancedSmallStatCard(Icons.Default.DirectionsRun, "Avg. Pace", "9:45", "min/km", Modifier.weight(1f))
@@ -311,31 +417,27 @@ fun StatsRow() {
 }
 
 @Composable
-fun EnhancedSmallStatCard(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, value: String, unit: String, modifier: Modifier = Modifier) {
+fun EnhancedSmallStatCard(icon: ImageVector, title: String, value: String, unit: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Column(modifier = Modifier.padding(12.dp)) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .background(Purple40.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
+                    .size(32.dp)
+                    .background(Purple40.copy(alpha = 0.05f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = Purple40, modifier = Modifier.size(20.dp))
+                Icon(icon, contentDescription = null, tint = Purple40, modifier = Modifier.size(16.dp))
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(title, fontSize = 10.sp, color = Color.Gray, maxLines = 1)
-                Text(value, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(unit, fontSize = 10.sp, color = Color.Gray)
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(title, fontSize = 10.sp, color = Color.Gray, lineHeight = 12.sp)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(value, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(unit, fontSize = 10.sp, color = Color.LightGray)
         }
     }
 }
@@ -348,17 +450,17 @@ fun AchievementsSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Achievements", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
+            Text("Achievements", fontWeight = FontWeight.Bold, fontSize = 18.sp)
             Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Card(
-            shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Row(
                 modifier = Modifier.padding(16.dp),
@@ -366,60 +468,64 @@ fun AchievementsSection() {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(50.dp)
-                        .background(Color(0xFFFFF9C4), RoundedCornerShape(12.dp)),
+                        .size(48.dp)
+                        .background(Color(0xFFFFF9C4), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(32.dp))
+                    Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFD600), modifier = Modifier.size(24.dp))
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                Column {
-                    Text("Goal Getter", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Goal Getter", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Text("Hit your daily step goal", fontSize = 12.sp, color = Color.Gray)
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text("8,420 / 10,000 steps", fontWeight = FontWeight.SemiBold, fontSize = 11.sp, color = Color.Gray)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(20.dp))
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("8,420 / 10,000 steps", fontSize = 11.sp, color = Color.Gray)
+                    Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(20.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun BottomNavBar() {
+fun BottomNavBar(navController: NavController) {
     NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = { navController.navigate(ROUT_HOME) },
             icon = { Icon(Icons.Default.Home, null) },
             label = { Text("Home") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = { /* Navigate to Workouts */ },
             icon = { Icon(Icons.Default.FitnessCenter, null) },
             label = { Text("Workouts") }
         )
         NavigationBarItem(
             selected = true,
-            onClick = {},
+            onClick = { navController.navigate(ROUT_STEPTRACKER) },
             icon = { Icon(Icons.AutoMirrored.Filled.DirectionsWalk, null) },
-            label = { Text("Activity") }
+            label = { Text("Activity") },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = Purple40,
+                selectedTextColor = Purple40,
+                indicatorColor = Color(0xFFF0EFFF)
+            )
         )
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = { /* Navigate to Progress */ },
             icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
             label = { Text("Progress") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = { /* Navigate to Profile */ },
             icon = { Icon(Icons.Default.Person, null) },
             label = { Text("Profile") }
         )
