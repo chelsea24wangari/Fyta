@@ -291,7 +291,7 @@ fun WorkoutCard() {
         Column {
 
             Image(
-                painter = painterResource(id = R.drawable.gym2),
+                painter = painterResource(id = R.drawable.work1),
                 contentDescription = null,
                 modifier = Modifier.height(120.dp),
                 contentScale = ContentScale.Crop

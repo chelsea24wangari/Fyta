@@ -1,5 +1,6 @@
 package com.chelsea.fyta.ui.screens.goal
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,12 +20,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.chelsea.fyta.R
 import com.chelsea.fyta.ui.theme.Pink80
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
@@ -268,11 +271,11 @@ fun WeeklyTargets() {
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(
-                                if (completed[index]) Color(0xFFE8F5E9) else Color.Transparent
+                                if (completed[index]) Color.LightGray else Color.White
                             )
                             .border(
                                 width = 1.dp,
-                                color = if (index == current) Purple40 else if (completed[index]) Color.Transparent else Color(0xFFEEEEEE),
+                                color = if (index == current) Purple40 else if (completed[index]) Color.Transparent else Color.White,
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -555,7 +558,13 @@ fun BottomNavigationBar(navController: NavController) {
             onClick = { }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Restaurant, contentDescription = "Nutrition") },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.apple),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
             label = { Text("Nutrition", fontSize = 10.sp) },
             selected = false,
             onClick = { }
