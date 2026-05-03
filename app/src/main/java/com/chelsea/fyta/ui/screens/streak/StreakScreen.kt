@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import com.chelsea.fyta.R
 
 
 @Composable
@@ -209,7 +210,7 @@ fun StreakCard() {
 
                     Text(
                         text = "Days",
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Purple40.copy(alpha = 0.7f)
 
@@ -220,7 +221,7 @@ fun StreakCard() {
 
                     Text(
                         text = "Keep it going! 💪",
-                        fontSize = 14.sp,
+                        fontSize = 17.sp,
                         color = Color.Gray
                     )
                 }
@@ -265,7 +266,7 @@ fun StreakCard() {
                                 .size(32.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (index < 7) Color(0xFF6C4EF6) else Color(0xFFFF7043)
+                                    if (index < 7) Purple40 else Color(0xFFFF7043)
                                 ),
 
                             contentAlignment = Alignment.Center
@@ -799,7 +800,13 @@ fun BottomNav(navController: NavController) {
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(ROUT_CALORIETRACKER) },
-            icon = { Icon(Icons.Default.Restaurant, null) },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.apple),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
             label = { Text("Nutrition") }
 
         )
@@ -807,12 +814,12 @@ fun BottomNav(navController: NavController) {
         NavigationBarItem(
             selected = true,
             onClick = { navController.navigate(ROUT_PROGRESS) },
-            icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
+            icon = {Icon(Icons.Default.ShowChart, null)},
             label = { Text("Progress") },
 
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF6C4EF6),
-                selectedTextColor = Color(0xFF6C4EF6),
+                selectedIconColor = Purple40,
+                selectedTextColor = Purple40,
                 indicatorColor = Color(0xFFF0EFFF)
             )
         )
@@ -821,7 +828,13 @@ fun BottomNav(navController: NavController) {
             selected = false,
             onClick = { /* Navigate to Profile */ },
             icon = { Icon(Icons.Default.Person, null) },
-            label = { Text("Profile") }
+            label = { Text("Profile") },
+
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = Purple40,
+                selectedTextColor = Purple40,
+                indicatorColor = Color(0xFFF0EFFF)
+            )
 
         )
     }

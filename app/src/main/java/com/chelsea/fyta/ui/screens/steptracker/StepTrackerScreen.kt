@@ -201,9 +201,9 @@ fun StepSummaryCard() {
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                DetailedStatItem(Icons.Default.LocationOn, "Distance", "6.24", "km", Color(0xFF6C4EF6))
+                DetailedStatItem(Icons.Default.LocationOn, "Distance", "6.24", "km", Purple40)
                 DetailedStatItem(Icons.Default.Whatshot, "Calories Burned", "520", "kcal", Color(0xFFFF7043))
-                DetailedStatItem(Icons.Default.Timer, "Active Time", "1h 12m", "mins", Color.Blue)
+                DetailedStatItem(Icons.Default.Timer, "Active Time", "1h 12m", "mins", Purple40)
             }
         }
     }
@@ -253,7 +253,7 @@ fun RouteSection() {
 
     Column(modifier = Modifier.padding(16.dp)) {
 
-        // 🔝 Title Row
+        //  Title Row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -272,7 +272,7 @@ fun RouteSection() {
                     onCheckedChange = { isGpsOn = it },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF4CAF50)
+                        checkedTrackColor = Color.Green
                     )
                 )
             }

@@ -494,7 +494,13 @@ fun BottomNavBarNutrition(navController: NavController) {
         NavigationBarItem(
             selected = true,
             onClick = { navController.navigate(ROUT_CALORIETRACKER) },
-            icon = { Icon(Icons.Default.Restaurant, null) },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.apple),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
             label = { Text("Nutrition") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Purple40,

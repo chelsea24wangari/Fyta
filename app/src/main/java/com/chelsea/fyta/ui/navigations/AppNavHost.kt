@@ -1,5 +1,6 @@
 package com.chelsea.fyta.ui.navigations
 
+import android.provider.ContactsContract
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -9,10 +10,14 @@ import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.ui.screens.auth.LoginScreen
 import com.chelsea.fyta.ui.screens.auth.RegisterScreen
 import com.chelsea.fyta.ui.screens.calorie.CalorieTrackerScreen
+import com.chelsea.fyta.ui.screens.home.HomeScreen
+import com.chelsea.fyta.ui.screens.onboarding.OnboardingScreen
+import com.chelsea.fyta.ui.screens.profile.ProfileScreen
 import com.chelsea.fyta.ui.screens.progress.ProgressScreen
 import com.chelsea.fyta.ui.screens.splash.SplashScreen
 import com.chelsea.fyta.ui.screens.steptracker.StepTrackerScreen
 import com.chelsea.fyta.ui.screens.streak.StreakScreen
+import com.chelsea.fyta.ui.screens.workout.WorkoutScreen
 
 
 @Composable
@@ -48,7 +53,37 @@ fun AppNavHost(
         composable(ROUT_PROGRESS)
         { ProgressScreen(navController) }
 
+        composable(ROUT_HOME)
+        { HomeScreen(navController) }
+
+        composable(ROUT_WORKOUT)
+        { WorkoutScreen(navController) }
+
+        composable(ROUT_PROFILE)
+        { ProfileScreen(navController) }
+
+        composable(ROUT_GOAL)
+        { GoalScreen(navController) }
+
+        composable(ROUT_ONBOARDING)
+        { OnboardingScreen(navController) }
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
+}
+
+@Composable
+fun GoalScreen(x0: NavHostController) {
+    TODO("Not yet implemented")
 }
