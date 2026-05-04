@@ -15,6 +15,6 @@ const val ROUT_NOTIFICATION = "notification"
 const val ROUT_PROGRESS = "progress"
 
 const val ROUT_PROFILE = "profile"
-const val ROUT_CHALLENGE = "challenge"
+const val ROUT_SOCIAL = "social"
 const val ROUT_WORKOUT = "workout"
 const val ROUT_SCAFFOLD = "scaffold"

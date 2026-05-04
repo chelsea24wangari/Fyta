@@ -87,6 +87,7 @@ fun NotificationsScreen(navController: NavController) {
         }
 
         // Filters Row
+
         FilterRow()
 
         LazyColumn(
@@ -265,53 +266,71 @@ fun NotificationItem(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+
     ) {
+
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.Top
+
         ) {
+
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(color.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
+
             ) {
+
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = color,
                     modifier = Modifier.size(24.dp)
                 )
+
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
+
             Column(modifier = Modifier.weight(1f)) {
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
+
                 ) {
+
                     Text(
                         text = title,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1A1C1E)
+
                     )
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
+
                         Text(
                             text = time,
                             fontSize = 11.sp,
                             color = Color.Gray
                         )
+
                         if (isUnread) {
+
                             Spacer(modifier = Modifier.width(6.dp))
+
                             Box(
                                 modifier = Modifier
                                     .size(6.dp)
                                     .clip(CircleShape)
                                     .background(Purple40)
+
                             )
                         }
                     }
@@ -330,27 +349,36 @@ fun NotificationItem(
 
 @Composable
 fun SectionHeader(title: String) {
+
     Row(
+
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
+
     ) {
+
         Text(
             text = title,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A1C1E)
+
         )
+
         Text(
             text = "View All",
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             color = Purple40
+
         )
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

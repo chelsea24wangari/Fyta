@@ -57,6 +57,7 @@ import com.chelsea.fyta.ui.theme.Purple40
 fun WorkoutScreen(navController: NavController) {
 
     Scaffold(
+
         bottomBar = { BottomNavWorkout(navController) }
     ) { padding ->
 
@@ -73,6 +74,7 @@ fun WorkoutScreen(navController: NavController) {
             item { SuggestedWorkouts() }
 
             item { WorkoutHistory() }
+
         }
     }
 }
@@ -86,7 +88,9 @@ fun HeaderSection() {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
+
         ) {
+
             Icon(Icons.Default.Menu, contentDescription = null)
 
             Icon(
@@ -105,6 +109,8 @@ fun HeaderSection() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
+
+
             TabItem("Overview", false)
 
             Spacer(modifier = Modifier.width(6.dp))
@@ -118,6 +124,7 @@ fun HeaderSection() {
             Spacer(modifier = Modifier.width(6.dp))
 
             TabItem("Stats", false)
+
         }
     }
 }
@@ -135,7 +142,7 @@ fun TabItem(title: String, selected: Boolean) {
                 modifier = Modifier
                     .height(2.dp)
                     .width(40.dp)
-                    .background(Color(0xFF6C4EF6))
+                    .background(Purple40)
             )
         }
     }
@@ -159,18 +166,20 @@ fun LogWorkoutCard() {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
+
             ) {
+
                 Text("Log a Workout", fontWeight = FontWeight.Bold)
                 Text("View Exercises", color = Purple40)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
+
             Row {
 
                 Image(
-                    painter = painterResource(id = R.drawable.gym1), // replace
-
+                    painter = painterResource(id = R.drawable.gym1),
                     contentDescription = null,
                     modifier = Modifier
                         .size(80.dp)
@@ -180,6 +189,7 @@ fun LogWorkoutCard() {
 
                 Spacer(modifier = Modifier.width(12.dp))
 
+
                 Column {
                     Text("Dumbbell Bench Press", fontWeight = FontWeight.Bold)
                     Text("Chest • Compound", color = Color.Gray)
@@ -188,30 +198,40 @@ fun LogWorkoutCard() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+
             // Sets
+
             repeat(3) { index ->
                 SetRow(set = index + 1)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
+
             OutlinedButton(
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()
+
             ) {
+
                 Text("+ Add Set")
+
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
 
             Button(
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Purple40
+
                 )
             ) {
+
                 Text("Finish Workout", color = Color.White)
+
             }
         }
     }
@@ -225,6 +245,7 @@ fun SetRow(set: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
+
     ) {
 
         Text("$set", modifier = Modifier.width(30.dp))
@@ -249,6 +270,7 @@ fun SetRow(set: Int) {
             Icons.Default.CheckCircle,
             contentDescription = null,
             tint = Purple40
+
         )
     }
 }
@@ -265,7 +287,7 @@ fun SuggestedWorkouts() {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Suggested Workouts", fontWeight = FontWeight.Bold)
-            Text("View All", color = Color(0xFF6C4EF6))
+            Text("View All", color = Purple40)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -273,6 +295,7 @@ fun SuggestedWorkouts() {
         LazyRow {
             items(3) {
                 WorkoutCard()
+
             }
         }
     }
