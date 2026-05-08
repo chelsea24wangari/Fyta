@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
-import com.chelsea.fyta.ui.theme.Pink80
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
 
@@ -49,7 +47,7 @@ fun GoalScreen(navController: NavController) {
 
         ) {
 
-            TopBar()
+            TopBar(navController)
 
             GoalHeader()
 
@@ -69,7 +67,7 @@ fun GoalScreen(navController: NavController) {
 
 
 @Composable
-fun TopBar() {
+fun TopBar(navController: NavController) {
 
     Row(
         modifier = Modifier
@@ -80,18 +78,16 @@ fun TopBar() {
 
     ) {
 
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Back",
-            modifier = Modifier.size(24.dp)
+        IconButton(onClick = { navController.popBackStack() }) {
 
-        )
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+        }
 
         Text(
             text = "Goal Details",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1D1B20)
+            color = Color.Black
         )
 
         Text(
@@ -249,7 +245,7 @@ fun WeeklyTargets() {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "May 19 – May 25", fontSize = 12.sp, color = Color.Gray)
+                Text(text = "May 19 – May 25", fontSize = 12.sp, color = Color.Black)
             }
         }
 
@@ -389,7 +385,7 @@ fun ProgressBreakdown() {
             progressColor = Color(0xFFF57C00)
         )
         ProgressItem(
-            icon = Icons.Default.DirectionsWalk,
+            icon = Icons.AutoMirrored.Filled.DirectionsWalk,
             iconBg = Color(0xFFE8F5E9),
             iconTint = Color.Green,
             title = "Steps",

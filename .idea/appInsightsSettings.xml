@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.chelsea.fyta" />
+                  <option name="mobileSdkAppId" value="1:34152241608:android:d6a23e1a4b5ec22a26c8fd" />
+                  <option name="projectId" value="fyta-cff95" />
+                  <option name="projectNumber" value="34152241608" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

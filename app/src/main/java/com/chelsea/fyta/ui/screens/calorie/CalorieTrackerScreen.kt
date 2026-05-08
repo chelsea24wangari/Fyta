@@ -205,9 +205,9 @@ fun CalorieSummaryCard() {
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
-                    Text("1,350", fontSize = 26.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Consumed", color = Color.Gray, fontSize = 12.sp)
-                    Text("cal", color = Color.LightGray, fontSize = 11.sp)
+                    Text("1,350", fontSize = 26.sp, fontWeight = FontWeight.ExtraBold, color = Purple40)
+                    Text("Consumed", color = Color.Black, fontSize = 12.sp)
+                    Text("cal", color = Color.Black, fontSize = 11.sp)
                 }
             }
 
@@ -232,7 +232,7 @@ fun SummaryItem(title: String, value: String, color: Color = Color.Black) {
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Text(title, fontSize = 12.sp, color = Color.Gray)
+        Text(title, fontSize = 12.sp, color = Color.Black)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -240,7 +240,7 @@ fun SummaryItem(title: String, value: String, color: Color = Color.Black) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text("cal", fontSize = 10.sp, color = Color.Gray)
+        Text("cal", fontSize = 10.sp, color = Color.Black)
     }
 }
 
@@ -252,7 +252,7 @@ fun MacroNutrientsSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Macronutrients", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Macronutrients", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
             Text("Learn More", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
         }
 
@@ -288,7 +288,7 @@ fun MacroCard(title: String, value: String, progress: Float, color: Color, modif
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(value, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Black)
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -317,7 +317,7 @@ fun AddMealSection() {
 
     Column(modifier = Modifier.padding(16.dp)) {
 
-        Text("Add a Meal", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text("Add a Meal", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -371,7 +371,7 @@ fun ActionCard(icon: ImageVector, text: String, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.width(8.dp))
 
 
-            Text(text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, lineHeight = 15.sp)
+            Text(text, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, lineHeight = 15.sp, color = Color.Black)
         }
     }
 }
@@ -387,7 +387,7 @@ fun MealsList() {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text("Today's Meals", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Today's Meals", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
 
             Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
         }
@@ -424,8 +424,8 @@ fun MealItem(image: Int, title: String, desc: String, macros: String, calories: 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(desc, fontSize = 13.sp, color = Color.Gray)
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
+            Text(desc, fontSize = 13.sp, color = Color.Black)
             Text(macros, fontSize = 12.sp, color = Purple40.copy(alpha = 0.8f), fontWeight = FontWeight.Medium)
         }
 

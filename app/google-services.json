@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "34152241608",
+    "project_id": "fyta-cff95",
+    "storage_bucket": "fyta-cff95.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34152241608:android:d6a23e1a4b5ec22a26c8fd",
+        "android_client_info": {
+          "package_name": "com.chelsea.fyta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkad7RQ5-jn7bTE7eXdAiVbfTs5eu6BrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

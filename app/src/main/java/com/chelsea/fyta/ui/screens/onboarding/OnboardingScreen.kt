@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
 import java.util.Locale
@@ -43,6 +45,10 @@ fun OnboardingScreen(navController: NavController) {
     var selectedGoal by remember { mutableStateOf("Lose Weight") }
     var steps by remember { mutableFloatStateOf(10000f) }
     var calories by remember { mutableFloatStateOf(2000f) }
+
+    var age by remember { mutableStateOf("") }
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -85,20 +91,20 @@ fun OnboardingScreen(navController: NavController) {
                 Text(
                     text = "Tell us a bit about yourself so we can personalize your fitness journey.",
                     fontSize = 13.sp,
-                    color = Color.Gray,
+                    color = Color.Black,
                     lineHeight = 22.sp
                 )
 
             }
 
             Image(
-                painter = painterResource(id = R.drawable.profile),
+                painter = painterResource(id = R.drawable.fitness),
                 contentDescription = "Profile",
                 modifier = Modifier
-                    .size(width = 130.dp, height = 250.dp)
+                    .size(width = 150.dp, height = 350.dp)
                     .align(Alignment.TopEnd)
                     .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
         }
 
@@ -129,11 +135,63 @@ fun OnboardingScreen(navController: NavController) {
 
             ) {
 
-                DetailItem(Icons.Default.CalendarMonth, "Age", "29", "years")
-                CustomVerticalDivider()
-                DetailItem(Icons.Default.MonitorWeight, "Weight", "70", "kg")
-                CustomVerticalDivider()
-                DetailItem(Icons.Default.Straighten, "Height", "175", "cm")
+                Column {
+
+                    OutlinedTextField(
+                        value = age,
+                        onValueChange = { age = it },
+                        label = { Text("Age") },
+
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Cake,
+                                contentDescription = null,
+                                tint = Purple40
+                            )
+                        },
+
+
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = weight,
+                        onValueChange = { weight = it },
+                        label = { Text("Weight (kg)") },
+
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.MonitorWeight,
+                                contentDescription = null,
+                                tint = Purple40
+                            )
+                        },
+
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = height,
+                        onValueChange = { height = it },
+                        label = { Text("Height (cm)") },
+
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Height,
+                                contentDescription = null,
+                                tint = Purple40
+                            )
+                        },
+
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+
             }
         }
 
@@ -197,12 +255,12 @@ fun OnboardingScreen(navController: NavController) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 
-                Icon(Icons.Default.Info, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                Icon(Icons.Default.Info, contentDescription = null, tint = Color.Red, modifier = Modifier.size(14.dp))
 
                 Spacer(modifier = Modifier.width(4.dp))
 
 
-                Text("You can update these later", fontSize = 11.sp, color = Color.Gray)
+                Text("You can update these later", fontSize = 11.sp, color = Color.Red)
             }
         }
 
@@ -256,7 +314,7 @@ fun OnboardingScreen(navController: NavController) {
 
         // Bottom Button
         Button(
-            onClick = {},
+            onClick = {navController.navigate(ROUT_HOME)},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -316,6 +374,8 @@ fun SectionHeader(icon: ImageVector, title: String) {
 
 @Composable
 fun DetailItem(icon: ImageVector, title: String, value: String, unit: String) {
+
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
@@ -324,17 +384,13 @@ fun DetailItem(icon: ImageVector, title: String, value: String, unit: String) {
                 .background(Color(0xFFF0EFFF)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = Purple40, modifier = Modifier.size(20.dp))
+
 
         }
-        Spacer(modifier = Modifier.height(8.dp))
 
-
-        Text(title, fontSize = 12.sp, color = Color.Gray)
-        Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-        Text(unit, fontSize = 12.sp, color = Color.Gray)
+        }
     }
-}
+
 
 
 @Composable

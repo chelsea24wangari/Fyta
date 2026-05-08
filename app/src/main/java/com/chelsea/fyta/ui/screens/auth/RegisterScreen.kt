@@ -1,7 +1,10 @@
 package com.chelsea.fyta.ui.screens.auth
 
+import android.R.attr.name
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,12 +30,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.models.User
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_ONBOARDING
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
 import com.chelsea.fyta.ui.theme.Purple80
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+
+    val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current
+    val auth = remember { if (isPreview) null else FirebaseAuth.getInstance() }
+    val database = remember { if (isPreview) null else FirebaseDatabase.getInstance().reference }
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -105,11 +121,12 @@ fun RegisterScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             // Form Section
+
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = { Text("First Name") },
+                    label = { Text("First Name", color = Color.Black) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Purple40) }
@@ -118,7 +135,7 @@ fun RegisterScreen(navController: NavController) {
                 OutlinedTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = { Text("Last Name") },
+                    label = { Text("Last Name", color = Color.Black) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Purple40) }
@@ -130,7 +147,7 @@ fun RegisterScreen(navController: NavController) {
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text("Email", color = Color.Black) },
                 placeholder = { Text("Enter your email") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -142,7 +159,7 @@ fun RegisterScreen(navController: NavController) {
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text("Password", color = Color.Black) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
@@ -154,7 +171,47 @@ fun RegisterScreen(navController: NavController) {
 
             // Register Button
             Button(
-                onClick = {},
+                onClick = {
+
+                    if (firstName.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    auth?.createUserWithEmailAndPassword(email, password)
+                        ?.addOnCompleteListener { task ->
+
+                            if (task.isSuccessful) {
+
+                                val uid = auth?.currentUser?.uid ?: return@addOnCompleteListener
+
+                                val user = User(
+                                    uid = uid,
+                                    username = "$firstName $lastName",
+                                    email = email
+                                )
+
+                                // Save user to Realtime Database
+                                database?.child("users")?.child(uid)?.setValue(user)
+                                    ?.addOnSuccessListener {
+
+                                        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
+
+                                        navController.navigate(ROUT_HOME) {
+                                            popUpTo(0)
+                                        }
+                                    }
+
+
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    task.exception?.message ?: "Registration failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -205,7 +262,8 @@ fun RegisterScreen(navController: NavController) {
                 Text(
                     text = "Login",
                     color = Purple20,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { navController.navigate("login") }
                 )
             }
             

@@ -16,25 +16,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import com.chelsea.fyta.R
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,50 +48,63 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.ui.theme.Purple40
+import com.chelsea.fyta.viewmodel.WorkoutViewModel
 
 
 @Composable
-fun WorkoutScreen(navController: NavController) {
+fun WorkoutScreen(
+    navController: NavController
+) {
 
+    WorkoutScreenContent(navController)
+}
+
+@Composable
+fun WorkoutScreenContent(navController: NavController) {
     Scaffold(
-
         bottomBar = { BottomNavWorkout(navController) }
     ) { padding ->
-
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .background(Color(0xFFF5F5F7))
         ) {
-
-            item { HeaderSection() }
+            item { HeaderSection(navController) }
 
             item { LogWorkoutCard() }
 
             item { SuggestedWorkouts() }
 
             item { WorkoutHistory() }
-
         }
     }
 }
 
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(navController: NavController) {
 
     Column(modifier = Modifier.padding(16.dp)) {
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
 
         ) {
 
-            Icon(Icons.Default.Menu, contentDescription = null)
+
+            IconButton(onClick = { navController.popBackStack() }) {
+
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+            }
+
 
             Icon(
                 Icons.Default.CalendarToday,
@@ -103,7 +116,8 @@ fun HeaderSection() {
         Text(
             "Workouts",
             fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -113,15 +127,15 @@ fun HeaderSection() {
 
             TabItem("Overview", false)
 
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(9.dp))
 
             TabItem("Workouts", true)
 
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(9.dp))
 
             TabItem("Programs", false)
 
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(9.dp))
 
             TabItem("Stats", false)
 
@@ -134,7 +148,7 @@ fun TabItem(title: String, selected: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             title,
-            color = if (selected) Purple40 else Color.Gray
+            color = if (selected) Purple40 else Color.Black
         )
 
         if (selected) {
@@ -169,7 +183,7 @@ fun LogWorkoutCard() {
 
             ) {
 
-                Text("Log a Workout", fontWeight = FontWeight.Bold)
+                Text("Log a Workout", fontWeight = FontWeight.Bold, color = Color.Black)
                 Text("View Exercises", color = Purple40)
             }
 
@@ -191,8 +205,8 @@ fun LogWorkoutCard() {
 
 
                 Column {
-                    Text("Dumbbell Bench Press", fontWeight = FontWeight.Bold)
-                    Text("Chest • Compound", color = Color.Gray)
+                    Text("Dumbbell Bench Press", fontWeight = FontWeight.Bold, color = Color.Black)
+                    Text("Chest • Compound", color = Color.Black)
                 }
             }
 
@@ -254,7 +268,8 @@ fun SetRow(set: Int) {
             value = "20",
             onValueChange = {},
             modifier = Modifier.weight(1f),
-            label = { Text("Weight") }
+            label = { Text("Weight") },
+            colors = OutlinedTextFieldDefaults.colors(Color.Black)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -286,23 +301,50 @@ fun SuggestedWorkouts() {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Suggested Workouts", fontWeight = FontWeight.Bold)
+            Text("Suggested Workouts", fontWeight = FontWeight.Bold, color = Color.Black)
             Text("View All", color = Purple40)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow {
-            items(3) {
-                WorkoutCard()
+            item {
+                WorkoutCard(
+                    title = "Push Day",
+                    subtitle = "Chest, Shoulders",
+                    details = "6 Exercises • 45 min",
+                    imageRes = R.drawable.work2
+                )
+            }
 
+            item {
+                WorkoutCard(
+                    title = "Leg Day",
+                    subtitle = "Quads, Hamstrings",
+                    details = "7 Exercises • 50 min",
+                    imageRes = R.drawable.work3
+                )
+            }
+
+            item {
+                WorkoutCard(
+                    title = "Muscle Gain",
+                    subtitle = "Full Body",
+                    details = "5 Exercises • 40 min",
+                    imageRes = R.drawable.work1
+                )
             }
         }
     }
 }
 
 @Composable
-fun WorkoutCard() {
+fun WorkoutCard(
+    title: String,
+    subtitle: String,
+    details: String,
+    imageRes: Int
+) {
 
     Card(
         modifier = Modifier
@@ -314,16 +356,16 @@ fun WorkoutCard() {
         Column {
 
             Image(
-                painter = painterResource(id = R.drawable.work1),
+                painter = painterResource(id = imageRes),
                 contentDescription = null,
                 modifier = Modifier.height(120.dp),
                 contentScale = ContentScale.Crop
             )
 
             Column(modifier = Modifier.padding(8.dp)) {
-                Text("Push Day", fontWeight = FontWeight.Bold)
-                Text("Chest, Shoulders", fontSize = 12.sp)
-                Text("6 Exercises • 45 min", fontSize = 12.sp)
+                Text(title, fontWeight = FontWeight.Bold)
+                Text(subtitle, fontSize = 12.sp)
+                Text(details, fontSize = 12.sp)
             }
         }
     }
@@ -331,58 +373,123 @@ fun WorkoutCard() {
 
 
 
+
+
+@Composable
+fun HistoryItem(
+    title: String,
+    date: String,
+    exercises: String,
+    imageRes: Int,
+    duration: String,
+    calories: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(10.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column {
+                Text(title, fontWeight = FontWeight.Bold)
+                Text("$date • $exercises", fontSize = 12.sp, color = Color.Gray)
+            }
+        }
+
+        Column(horizontalAlignment = Alignment.End) {
+            Text(duration)
+            Text(calories, color = Color(0xFFFF5722))
+        }
+    }
+}
+
 @Composable
 fun WorkoutHistory() {
+
+    data class WorkoutHistoryData(
+        val title: String,
+        val date: String,
+        val exercises: String,
+        val imageRes: Int,
+        val duration: String,
+        val calories: String
+    )
+
+    val historyList = listOf(
+        WorkoutHistoryData(
+            title = "Push Day",
+            date = "May 19",
+            exercises = "6 Exercises",
+            imageRes = R.drawable.work2,
+            duration = "45 min",
+            calories = "320 kcal"
+        ),
+        WorkoutHistoryData(
+            title = "Leg Day",
+            date = "July 11",
+            exercises = "7 Exercises",
+            imageRes = R.drawable.work3,
+            duration = "50 min",
+            calories = "410 kcal"
+        ),
+        WorkoutHistoryData(
+            title = "Muscle Gain",
+            date = "Jan 17",
+            exercises = "4 Exercises",
+            imageRes = R.drawable.work1,
+            duration = "40 min",
+            calories = "280 kcal"
+        ),
+        WorkoutHistoryData(
+            title = "Chest Gain",
+            date = "Aug 7",
+            exercises = "5 Exercises",
+            imageRes = R.drawable.gym1,
+            duration = "35 min",
+            calories = "300 kcal"
+        )
+    )
 
     Column(modifier = Modifier.padding(16.dp)) {
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Workout History", fontWeight = FontWeight.Bold)
+            Text("Workout History", fontWeight = FontWeight.Bold, color = Color.Black)
             Text("View All", color = Color(0xFF6C4EF6))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        repeat(4) {
-            HistoryItem()
+        historyList.forEach { item ->
+
+            HistoryItem(
+                title = item.title,
+                date = item.date,
+                exercises = item.exercises,
+                imageRes = item.imageRes,
+                duration = item.duration,
+                calories = item.calories,
+            )
         }
     }
 }
-
-
-
-@Composable
-fun HistoryItem() {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        Row {
-            Icon(Icons.Default.FitnessCenter, contentDescription = null)
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column {
-                Text("Push Day", fontWeight = FontWeight.Bold)
-                Text("May 19 • 6 Exercises", fontSize = 12.sp)
-            }
-        }
-
-        Column(horizontalAlignment = Alignment.End) {
-            Text("45 min")
-            Text("320 kcal", color = Color(0xFFFF5722))
-        }
-    }
-}
-
-
 
 
 @Composable
@@ -420,7 +527,7 @@ fun BottomNavWorkout(navController: NavController) {
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate("progress") },
-            icon = { Icon(Icons.Default.ShowChart, null) },
+            icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
             label = { Text("Progress") }
         )
 
@@ -484,8 +591,8 @@ fun BottomNavWorkout(navController: NavController) {
 
 
 
-@Preview (showBackground =true)
+@Preview(showBackground = true)
 @Composable
-fun ServiceScreenPreview(){
-    WorkoutScreen(rememberNavController())
+fun ServiceScreenPreview() {
+    WorkoutScreenContent(rememberNavController())
 }

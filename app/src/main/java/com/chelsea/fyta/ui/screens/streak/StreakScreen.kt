@@ -181,7 +181,7 @@ fun StreakCard() {
 
                     Icon(Icons.Default.Whatshot, null, tint = Color(0xFFFF7043), modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Current Streak", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text("Current Streak", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
 
                 }
 
@@ -222,7 +222,7 @@ fun StreakCard() {
                     Text(
                         text = "Keep it going! 💪",
                         fontSize = 17.sp,
-                        color = Color.Gray
+                        color = Color.Black
                     )
                 }
 
@@ -412,7 +412,7 @@ fun CalendarSection() {
                         textAlign = TextAlign.Center,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray.copy(alpha = 0.6f)
+                        color = Color.Black.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -554,7 +554,7 @@ fun LegendItem(color: Color, label: String, isToday: Boolean = false) {
             text = label,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Gray
+            color = Color.Black
         )
     }
 }
@@ -572,7 +572,7 @@ fun BadgesSection() {
 
         ) {
 
-            Text("Badges Earned", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Badges Earned", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
 
             TextButton(onClick = {}) {
                 Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold)
@@ -626,8 +626,8 @@ fun BadgeCard(title: String, desc: String, date: String, icon: ImageVector, colo
 
 
             Text(title, fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = TextAlign.Center)
-            Text(desc, fontSize = 10.sp, color = Color.Gray, textAlign = TextAlign.Center)
-            Text(date, fontSize = 10.sp, color = Color.LightGray, textAlign = TextAlign.Center)
+            Text(desc, fontSize = 10.sp, color = Color.Black, textAlign = TextAlign.Center)
+            Text(date, fontSize = 10.sp, color = Color.Black, textAlign = TextAlign.Center)
         }
     }
 }
@@ -644,7 +644,7 @@ fun MilestonesSection() {
 
         ) {
 
-            Text("Milestones", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Milestones", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
 
             TextButton(onClick = {}) {
                 Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold)

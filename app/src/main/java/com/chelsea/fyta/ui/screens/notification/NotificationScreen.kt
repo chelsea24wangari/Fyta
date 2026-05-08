@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -69,6 +70,11 @@ fun NotificationsScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
 
         ) {
+
+            IconButton(onClick = { navController.popBackStack() }) {
+
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+            }
 
             Text(
                 text = "Notifications",
@@ -318,7 +324,7 @@ fun NotificationItem(
                         Text(
                             text = time,
                             fontSize = 11.sp,
-                            color = Color.Gray
+                            color = Color.Black
                         )
 
                         if (isUnread) {
@@ -339,7 +345,7 @@ fun NotificationItem(
                 Text(
                     text = description,
                     fontSize = 12.sp,
-                    color = Color.Gray,
+                    color = Color.Black,
                     lineHeight = 16.sp
                 )
             }

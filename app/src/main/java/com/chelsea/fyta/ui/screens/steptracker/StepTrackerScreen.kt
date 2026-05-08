@@ -1,5 +1,6 @@
 package com.chelsea.fyta.ui.screens.steptracker
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.*
@@ -19,23 +21,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.R
 import com.chelsea.fyta.ui.navigations.ROUT_HOME
 import com.chelsea.fyta.ui.navigations.ROUT_STEPTRACKER
 import com.chelsea.fyta.ui.theme.Purple40
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.Polyline
-import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun StepTrackerScreen(navController: NavController) {
@@ -187,11 +184,11 @@ fun StepSummaryCard() {
                         modifier = Modifier.size(24.dp)
                     )
 
-                    Text("8,420", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("8,420", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = Color.Black)
 
-                    Text("Steps", color = Color.Gray, fontSize = 12.sp)
+                    Text("Steps", color = Color.Black, fontSize = 12.sp)
 
-                    Text("Goal: 10,000", color = Color.Gray, fontSize = 11.sp)
+                    Text("Goal: 10,000", color = Color.Black, fontSize = 11.sp)
                 }
             }
 
@@ -230,7 +227,7 @@ fun DetailedStatItem(icon: ImageVector, title: String, value: String, unit: Stri
 
         Column {
 
-            Text(title, fontSize = 11.sp, color = Color.Gray)
+            Text(title, fontSize = 11.sp, color = Color.Black)
 
             Row(verticalAlignment = Alignment.Bottom) {
 
@@ -239,7 +236,7 @@ fun DetailedStatItem(icon: ImageVector, title: String, value: String, unit: Stri
                 Spacer(modifier = Modifier.width(4.dp))
 
 
-                Text(unit, fontSize = 11.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 2.dp))
+                Text(unit, fontSize = 11.sp, color = Color.Black, modifier = Modifier.padding(bottom = 2.dp))
 
             }
         }
@@ -260,7 +257,7 @@ fun RouteSection() {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text("Your Route", fontWeight = FontWeight.Bold)
+            Text("Your Route", fontWeight = FontWeight.Bold, color = Color.Black)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("GPS", color = Color.Gray)
@@ -281,13 +278,6 @@ fun RouteSection() {
         Spacer(modifier = Modifier.height(8.dp))
 
         // 🗺️ Google Map
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(
-                LatLng(-1.286389, 36.817223), // Nairobi example
-                14f
-            )
-        }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -295,46 +285,11 @@ fun RouteSection() {
                 .clip(RoundedCornerShape(16.dp))
         ) {
 
-            GoogleMap (
-                modifier = Modifier.matchParentSize(),
-                cameraPositionState = cameraPositionState
-            ) {
-
-                // Start marker
-                Marker(
-                    state = MarkerState(position = LatLng(-1.286389, 36.817223)),
-                    title = "Start"
-                )
-
-                // End marker
-                Marker(
-                    state = MarkerState(position = LatLng(-1.280000, 36.820000)),
-                    title = "End"
-                )
-
-                // Route line
-                Polyline(
-                    points = listOf(
-                        LatLng(-1.286389, 36.817223),
-                        LatLng(-1.284000, 36.819000),
-                        LatLng(-1.282000, 36.821000),
-                        LatLng(-1.280000, 36.820000)
-                    ),
-                    color = Color(0xFF6C4EF6),
-                    width = 8f
-                )
-            }
-
-            GoogleMap(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                cameraPositionState = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(
-                        LatLng(-1.286389, 36.817223),
-                        14f
-                    )
-                }
+            Image(
+                painter = painterResource(id = R.drawable.route),
+                contentDescription = "Route Map",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         }
     }
@@ -343,7 +298,7 @@ fun RouteSection() {
 @Composable
 fun StepsOverviewSection() {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Steps Overview", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text("Steps Overview", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
         Spacer(modifier = Modifier.height(16.dp))
         
         Box(
@@ -392,11 +347,11 @@ fun StepsOverviewSection() {
                 .padding(top = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("12 AM", fontSize = 10.sp, color = Color.Gray)
-            Text("6 AM", fontSize = 10.sp, color = Color.Gray)
-            Text("12 PM", fontSize = 10.sp, color = Color.Gray)
-            Text("6 PM", fontSize = 10.sp, color = Color.Gray)
-            Text("12 AM", fontSize = 10.sp, color = Color.Gray)
+            Text("12 AM", fontSize = 10.sp, color = Color.Black)
+            Text("6 AM", fontSize = 10.sp, color = Color.Black)
+            Text("12 PM", fontSize = 10.sp, color = Color.Black)
+            Text("6 PM", fontSize = 10.sp, color = Color.Black)
+            Text("12 AM", fontSize = 10.sp, color = Color.Black)
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -411,7 +366,7 @@ fun StatsRow() {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         EnhancedSmallStatCard(Icons.AutoMirrored.Filled.DirectionsWalk, "Avg. Steps / Min", "116", "steps", Modifier.weight(1f))
-        EnhancedSmallStatCard(Icons.Default.DirectionsRun, "Avg. Pace", "9:45", "min/km", Modifier.weight(1f))
+        EnhancedSmallStatCard(Icons.AutoMirrored.Filled.DirectionsRun, "Avg. Pace", "9:45", "min/km", Modifier.weight(1f))
         EnhancedSmallStatCard(Icons.Default.Favorite, "Total Steps", "8,420", "steps", Modifier.weight(1f))
     }
 }
@@ -434,10 +389,10 @@ fun EnhancedSmallStatCard(icon: ImageVector, title: String, value: String, unit:
                 Icon(icon, contentDescription = null, tint = Purple40, modifier = Modifier.size(16.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(title, fontSize = 10.sp, color = Color.Gray, lineHeight = 12.sp)
+            Text(title, fontSize = 10.sp, color = Color.Black, lineHeight = 12.sp)
             Spacer(modifier = Modifier.height(2.dp))
             Text(value, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(unit, fontSize = 10.sp, color = Color.LightGray)
+            Text(unit, fontSize = 10.sp, color = Color.Black)
         }
     }
 }
@@ -450,7 +405,7 @@ fun AchievementsSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Achievements", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("Achievements", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
             Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
         }
 
@@ -472,18 +427,18 @@ fun AchievementsSection() {
                         .background(Color(0xFFFFF9C4), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFD600), modifier = Modifier.size(24.dp))
+                    Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFF5722), modifier = Modifier.size(24.dp))
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Goal Getter", fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                    Text("Hit your daily step goal", fontSize = 12.sp, color = Color.Gray)
+                    Text("Goal Getter", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.Black)
+                    Text("Hit your daily step goal", fontSize = 12.sp, color = Color.Black)
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("8,420 / 10,000 steps", fontSize = 11.sp, color = Color.Gray)
+                    Text("8,420 / 10,000 steps", fontSize = 11.sp, color = Color.Black)
                     Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(20.dp))
                 }
             }
@@ -517,6 +472,7 @@ fun BottomNavBar(navController: NavController) {
                 indicatorColor = Color(0xFFF0EFFF)
             )
         )
+
         NavigationBarItem(
             selected = false,
             onClick = { /* Navigate to Progress */ },

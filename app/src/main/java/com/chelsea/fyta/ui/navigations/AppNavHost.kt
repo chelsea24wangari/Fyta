@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.chelsea.fyta.ui.screens.admin.AdminScreen
 import com.chelsea.fyta.ui.screens.auth.LoginScreen
 import com.chelsea.fyta.ui.screens.auth.RegisterScreen
 import com.chelsea.fyta.ui.screens.calorie.CalorieTrackerScreen
@@ -18,12 +19,12 @@ import com.chelsea.fyta.ui.screens.notification.NotificationsScreen
 import com.chelsea.fyta.ui.screens.onboarding.OnboardingScreen
 import com.chelsea.fyta.ui.screens.profile.ProfileScreen
 import com.chelsea.fyta.ui.screens.progress.ProgressScreen
-import com.chelsea.fyta.ui.screens.scaffold.ScaffoldScreen
 import com.chelsea.fyta.ui.screens.social.SocialScreen
 import com.chelsea.fyta.ui.screens.splash.SplashScreen
 import com.chelsea.fyta.ui.screens.steptracker.StepTrackerScreen
 import com.chelsea.fyta.ui.screens.streak.StreakScreen
 import com.chelsea.fyta.ui.screens.workout.WorkoutScreen
+import com.chelsea.markethub.ui.screens.scaffold.ScaffoldScreen
 
 
 @Composable
@@ -88,6 +89,9 @@ fun AppNavHost(
 
         composable(ROUT_SCAFFOLD)
         { ScaffoldScreen(navController) }
+
+        composable(ROUT_ADMIN)
+        { AdminScreen(navController) }
 
 
 

@@ -112,7 +112,7 @@ fun AboutScreen(navController: NavController) {
                 Text(
                     text = "FYTA is designed to help you live a healthier, stronger, and more balanced life. From personalized workouts to nutrition tracking and progress insights, we're with you every step of your fitness journey.",
                     fontSize = 13.sp,
-                    color = Color.Gray,
+                    color = Color.Black,
                     lineHeight = 18.sp
                 )
             }
@@ -291,7 +291,7 @@ fun InfoCard(icon: ImageVector, title: String, desc: String) {
                 Text(
                     text = desc,
                     fontSize = 13.sp,
-                    color = Color.Gray,
+                    color = Color.Black,
                     lineHeight = 18.sp
                 )
             }
@@ -388,7 +388,7 @@ fun BulletPoint(text: String) {
         Text(
             text = text,
             fontSize = 13.sp,
-            color = Color.Gray
+            color = Color.Black
         )
     }
 }

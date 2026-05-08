@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -56,64 +57,136 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.rememberCoroutineScope
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import com.chelsea.fyta.ui.navigations.*
+
+
+
 
 
 @Composable
-fun HomeScreen(navController: NavController) {
-
-    Scaffold(
-
-        bottomBar = { BottomNavBar(navController) },
-
-        floatingActionButton = {
+fun HomeScreen(
+    navController: NavController,
+) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
 
-            FloatingActionButton(
-                onClick = {},
-                containerColor = Color(0xFF6C4EF6),
-                shape = CircleShape
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(300.dp)
+                        .background(Color.White)
+                        .padding(24.dp)
+                ) {
+                    Text("Fyta", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Purple40)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    DrawerItem(icon = Icons.Default.Person, label = "Profile") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_PROFILE)
+                    }
+                    DrawerItem(icon = Icons.Default.Help, label = "About") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_ABOUT)
+                    }
+                    DrawerItem(icon = Icons.Default.Notifications, label = "Notifications") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_NOTIFICATION)
+                    }
+                    DrawerItem(icon = Icons.Default.EmojiEvents, label = "Streak") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_STREAK)
+                    }
+                    DrawerItem(icon = Icons.Default.LocationOn, label = "Location") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_LOCATION)
+                    }
+                    DrawerItem(icon = Icons.Default.Group, label = "Social Challenges") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_SOCIAL)
+                    }
+                    DrawerItem(icon = Icons.Default.FitnessCenter, label = "Goals") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_GOAL)}
 
-            ) {
+                    DrawerItem(icon = Icons.AutoMirrored.Filled.DirectionsWalk, label = "Step tracker") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_STEPTRACKER)
+                    }
+                    DrawerItem(icon = Icons.Default.Info, label = "Help & Support") {
+                        scope.launch { drawerState.close() }
 
-                Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
-
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    DrawerItem(icon = Icons.Default.Logout, label = "Logout", color = Color.Red) {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_LOGIN)
+                    }
+                }
             }
         }
-    ) { padding ->
-
-        LazyColumn(
-
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(Color(0xFFF5F5F7))
-
-        ) {
-
-            item { HeaderSection() }
-
-            item { StreakBanner() }
-
-            item { OverviewSection() }
-
-            item { WeeklyStepsChart() }
-
-            item { TodayWorkoutCard() }
-
-            item { DailyGoalsSection() }
-
-
-            item { Spacer(modifier = Modifier.height(80.dp)) }
-
+    ) {
+        Scaffold(
+            bottomBar = {
+                BottomNavBar(
+                    navController = navController,
+                    drawerState = drawerState,
+                    scope = scope
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {},
+                    containerColor = Color(0xFF6C4EF6),
+                    shape = CircleShape
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
+                }
+            }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color(0xFFF5F5F7))
+            ) {
+                item { HeaderSection(onMenuClick = { scope.launch { drawerState.open() } }) }
+                item { StreakBanner() }
+                item { OverviewSection() }
+                item { WeeklyStepsChart() }
+                item { TodayWorkoutCard() }
+                item { DailyGoalsSection() }
+                item { Spacer(modifier = Modifier.height(80.dp)) }
+            }
         }
     }
 }
 
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(onMenuClick: () -> Unit) {
 
 
     Row(
@@ -124,13 +197,15 @@ fun HeaderSection() {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Icon(Icons.Default.Menu, contentDescription = "Menu")
+        IconButton(onClick = onMenuClick) {
+            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
+        }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text("👋 Good Morning", color = Color.Gray, fontSize = 12.sp)
+            Text("👋 Good Morning", color = Color.Black, fontSize = 12.sp)
 
-            Text("Chelsea", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Crystal", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
 
         }
 
@@ -138,7 +213,7 @@ fun HeaderSection() {
 
             Box {
 
-                Icon(Icons.Default.Notifications, contentDescription = null)
+                Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.Black)
 
                 Box(
                     modifier = Modifier
@@ -152,7 +227,7 @@ fun HeaderSection() {
             Spacer(modifier = Modifier.width(12.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.logo), 
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier
                     .size(36.dp)
@@ -223,7 +298,7 @@ fun StreakBanner() {
             Icon(
                 Icons.Default.LocalFireDepartment,
                 contentDescription = null,
-                tint = Color.White.copy(alpha = 0.3f),
+                tint = Color(0xFFFF9800).copy(alpha = 0.3f),
                 modifier = Modifier.size(80.dp)
             )
         }
@@ -244,7 +319,7 @@ fun OverviewSection() {
 
         ) {
 
-            Text("Today's Overview", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("Today's Overview", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -288,7 +363,7 @@ fun OverviewCard(
 
             modifier = Modifier.width(110.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray)
 
         ) {
 
@@ -312,16 +387,9 @@ fun OverviewCard(
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = null,
-                            tint = color,
-                            modifier = Modifier.size(18.dp)
+                        Text(value, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.Black)
 
-                        )
-                        Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-
-                        Text(title, fontSize = 10.sp, color = Color.Gray)
+                        Text(title, fontSize = 8.sp, color = Color.Black)
                     }
                 }
             }
@@ -329,7 +397,7 @@ fun OverviewCard(
         Spacer(modifier = Modifier.height(8.dp))
 
 
-        Text("$percentage of $target", fontSize = 10.sp, color = Color.Gray)
+        Text("$percentage of $target", fontSize = 10.sp, color = Color.Black)
     }
 }
 
@@ -347,7 +415,7 @@ fun WeeklyStepsChart() {
 
         ) {
 
-            Text("Steps This Week", fontWeight = FontWeight.Bold)
+            Text("Steps This Week", fontWeight = FontWeight.Bold, color = Color.Black)
             Text("View More", color = Purple40, fontSize = 12.sp)
         }
 
@@ -364,7 +432,7 @@ fun WeeklyStepsChart() {
             ) {
 
                 listOf("15k", "10k", "5k", "0").forEach {
-                    Text(it, fontSize = 10.sp, color = Color.Gray)
+                    Text(it, fontSize = 10.sp, color = Color.Black)
                 }
             }
 
@@ -403,7 +471,7 @@ fun WeeklyStepsChart() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today").forEach {
-                        Text(it, fontSize = 10.sp, color = Color.Gray)
+                        Text(it, fontSize = 10.sp, color = Color.Black)
                     }
                 }
             }
@@ -421,7 +489,7 @@ fun TodayWorkoutCard() {
             .padding(16.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.LightGray)
 
     ) {
 
@@ -446,22 +514,22 @@ fun TodayWorkoutCard() {
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text("Today's Workout", color = Color.Gray, fontSize = 12.sp)
+                        Text("Today's Workout", color = Color.Black, fontSize = 12.sp)
 
-                        Text("Full Body Strength", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text("Full Body Strength", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
 
                         Spacer(modifier = Modifier.height(4.dp))
 
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
 
-                            Icon(Icons.Default.Schedule, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Gray)
+                            Icon(Icons.Default.Schedule, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Black)
 
-                            Text(" 45 min  ", fontSize = 12.sp, color = Color.Gray)
+                            Text(" 45 min  ", fontSize = 12.sp, color = Color.Black)
 
-                            Icon(Icons.Default.LocalFireDepartment, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Gray)
+                            Icon(Icons.Default.LocalFireDepartment, contentDescription = null, modifier = Modifier.size(14.dp), tint = Color.Black)
 
-                            Text(" 320 Cal", fontSize = 12.sp, color = Color.Gray)
+                            Text(" 320 Cal", fontSize = 12.sp, color = Color.Black)
                         }
                     }
                 }
@@ -505,7 +573,7 @@ fun DailyGoalsSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Daily Goals", fontWeight = FontWeight.Bold)
+            Text("Daily Goals", fontWeight = FontWeight.Bold, color = Color.Black)
             Text("View All", color = Purple40, fontSize = 12.sp)
         }
 
@@ -535,7 +603,7 @@ fun GoalItem(title: String, ratio: String, percentage: String, progress: Float, 
 
         ) {
 
-            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
+            Icon(icon, contentDescription = null, tint = Color.Black, modifier = Modifier.size(20.dp))
         }
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -550,7 +618,7 @@ fun GoalItem(title: String, ratio: String, percentage: String, progress: Float, 
             ) {
 
                 Text(title, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                Text(ratio, fontSize = 12.sp, color = Color.Gray)
+                Text(ratio, fontSize = 12.sp, color = Color.Black)
 
             }
 
@@ -581,7 +649,11 @@ fun GoalItem(title: String, ratio: String, percentage: String, progress: Float, 
 
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
 
     NavigationBar {
 
@@ -602,11 +674,10 @@ fun BottomNavBar(navController: NavController) {
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate("nutrition") },
-            icon = { 
-                Image(
-                    painter = painterResource(id = R.drawable.apple), 
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+            icon = {
+                Icon(
+                    Icons.Default.Restaurant,
+                    null
                 )
             },
             label = { Text("Nutrition") }
@@ -621,9 +692,52 @@ fun BottomNavBar(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("profile") },
-            icon = { Icon(Icons.Default.MoreHoriz, null) },
-            label = { Text("More") }
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
+        )
+
+    }
+}
+
+@Composable
+fun DrawerItem(
+    icon: ImageVector,
+    label: String,
+    color: Color = Color.Black,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (color == Color.Red) Color.Red else Purple40,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = color
         )
     }
 }

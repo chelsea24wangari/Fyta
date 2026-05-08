@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.screens.goal.BottomNavigationBar
 import com.chelsea.fyta.ui.theme.Purple40
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -63,12 +64,16 @@ fun LocationScreen(navController: NavController) {
 
             ) {
 
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                IconButton(onClick = { navController.popBackStack() }) {
+
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+                }
 
                 Text(
                     text = "Gyms Near You",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
 
                 Icon(
@@ -112,13 +117,14 @@ fun LocationScreen(navController: NavController) {
                     Text(
                         text = "Current Location",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
                     
                     Text(
                         text = "Kileleshwa. Nairobi",
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = Color.Black
                     )
                 }
                 Text(
@@ -138,47 +144,31 @@ fun LocationScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(20.dp))
             ) {
 
-                val ny = LatLng(40.7831, -73.9712)
-                val cameraPositionState = rememberCameraPositionState {
+                Image(
+                    painter = painterResource(id = R.drawable.map_placeholder),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
+                Icon(
+                    Icons.Default.LocationOn,
+                    contentDescription = null,
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .offset(x = 120.dp, y = 80.dp)
+                )
 
-                    position = CameraPosition.fromLatLngZoom(ny, 14f)
-
-                }
-                GoogleMap(
-                    modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState,
-                    uiSettings = MapUiSettings(zoomControlsEnabled = false)
-                ) {
-
-                    Marker(
-                        state = rememberMarkerState(position = ny),
-
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
-                    )
-                    // Sample markers to match the image
-
-                    val purpleHue = 270f
-
-                    Marker(state = rememberMarkerState(position = LatLng(40.785, -73.975)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                    Marker(state = rememberMarkerState(position = LatLng(40.782, -73.965)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                    Marker(state = rememberMarkerState(position = LatLng(40.788, -73.968)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                    Marker(state = rememberMarkerState(position = LatLng(40.780, -73.972)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                    Marker(state = rememberMarkerState(position = LatLng(40.775, -73.968)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                    Marker(state = rememberMarkerState(position = LatLng(40.790, -73.962)), icon = BitmapDescriptorFactory.defaultMarker(purpleHue))
-                }
-                
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-
                     MapOverlayButton(icon = Icons.Default.MyLocation)
                     MapOverlayButton(icon = Icons.Default.NearMe)
                 }
@@ -226,6 +216,7 @@ fun LocationScreen(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 fun MapOverlayButton(icon: androidx.compose.ui.graphics.vector.ImageVector) {
@@ -290,7 +281,8 @@ fun GymItem(gym: Gym) {
                     Text(
                         text = gym.name,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
 
                     )
 
@@ -310,7 +302,7 @@ fun GymItem(gym: Gym) {
                     Spacer(modifier = Modifier.width(4.dp))
 
 
-                    Text(text = gym.rating, fontSize = 13.sp, color = Color.Gray)
+                    Text(text = gym.rating, fontSize = 13.sp, color = Color.Black)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -319,7 +311,7 @@ fun GymItem(gym: Gym) {
                     Spacer(modifier = Modifier.width(4.dp))
 
 
-                    Text(text = "${gym.distance} away", fontSize = 13.sp, color = Color.Gray)
+                    Text(text = "${gym.distance} away", fontSize = 13.sp, color = Color.Black)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
 

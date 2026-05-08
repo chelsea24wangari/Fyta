@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -60,9 +61,9 @@ fun SocialScreen(navController: NavController) {
 
             ) {
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = { navController.popBackStack() }) {
 
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
                 }
 
                 Text(
@@ -98,7 +99,7 @@ fun SocialScreen(navController: NavController) {
             Text(
                 text = "Compete, stay motivated and achieve together!",
                 fontSize = 14.sp,
-                color = Color.Gray,
+                color = Color.Black,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
 
@@ -288,7 +289,7 @@ fun SocialScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(12.dp))
 
 
-                    Text("You're doing great! Keep it up and crush your goal.", fontSize = 13.sp, color = Color.Gray)
+                    Text("You're doing great! Keep it up and crush your goal.", fontSize = 13.sp, color = Color.Black)
                 }
             }
 
@@ -304,7 +305,7 @@ fun SocialScreen(navController: NavController) {
 
             ) {
 
-                Text("Group Challenges", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("Group Challenges", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
                 Text("View All", color = Purple40, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             }
 
@@ -398,7 +399,7 @@ fun LeaderboardItem(name: String, status: String, steps: String, rank: Int, imag
 
             val badgeColor = when (rank) {
                 1 -> Color(0xFFFF5722)
-                2 -> Color(0xFFC0C0C0)
+                2 -> Color(0xFFFF5722)
                 3 -> Color(0xFFFF5722)
                 else -> Color.Gray
             }
@@ -429,13 +430,13 @@ fun LeaderboardItem(name: String, status: String, steps: String, rank: Int, imag
 
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(name, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-            Text(status, fontSize = 12.sp, color = Color.Gray)
+            Text(name, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.Black)
+            Text(status, fontSize = 12.sp, color = Color.Black)
         }
 
         Column(horizontalAlignment = Alignment.End) {
             Text(steps, fontWeight = FontWeight.Bold, color = Color(0xFF6C4EF6), fontSize = 16.sp)
-            Text("steps", fontSize = 11.sp, color = Color.Gray)
+            Text("steps", fontSize = 11.sp, color = Color.Black)
         }
     }
 }
@@ -468,8 +469,8 @@ fun GroupChallengeItem(title: String, subtitle: String, progress: Float, progres
 
                 Column(modifier = Modifier.weight(1f)) {
 
-                    Text(title, fontWeight = FontWeight.Bold, fontSize = 17.sp)
-                    Text(subtitle, fontSize = 13.sp, color = Color.Gray)
+                    Text(title, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = Color.Black)
+                    Text(subtitle, fontSize = 13.sp, color = Color.Black)
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -492,7 +493,7 @@ fun GroupChallengeItem(title: String, subtitle: String, progress: Float, progres
                         Spacer(modifier = Modifier.width((members.take(3).size * 16).dp + 8.dp))
 
 
-                        Text("+$extraMembers members", fontSize = 12.sp, color = Color.Gray)
+                        Text("+$extraMembers members", fontSize = 12.sp, color = Color.Black)
                     }
                 }
                 Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.LightGray)
@@ -516,7 +517,7 @@ fun GroupChallengeItem(title: String, subtitle: String, progress: Float, progres
                 Column(horizontalAlignment = Alignment.End) {
 
                     Text(percentage, color = progressColor, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                    Text(progressText, fontSize = 11.sp, color = Color.Gray)
+                    Text(progressText, fontSize = 11.sp, color = Color.Black)
                 }
             }
         }
