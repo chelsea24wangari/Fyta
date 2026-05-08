@@ -30,14 +30,28 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
 import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
 import com.chelsea.fyta.ui.navigations.ROUT_STEPTRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun StepTrackerScreen(navController: NavController) {
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     Scaffold(
-        bottomBar = { BottomNavBar(navController) }
+        bottomBar = { BottomNavBar(
+            navController = navController,
+            drawerState = drawerState,
+            scope = scope
+
+        ) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -447,7 +461,12 @@ fun AchievementsSection() {
 }
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+
+) {
     NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
             selected = false,
@@ -457,33 +476,41 @@ fun BottomNavBar(navController: NavController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Workouts */ },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = { Icon(Icons.Default.FitnessCenter, null) },
             label = { Text("Workouts") }
         )
         NavigationBarItem(
-            selected = true,
-            onClick = { navController.navigate(ROUT_STEPTRACKER) },
-            icon = { Icon(Icons.AutoMirrored.Filled.DirectionsWalk, null) },
-            label = { Text("Activity") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                selectedTextColor = Purple40,
-                indicatorColor = Color(0xFFF0EFFF)
-            )
+            selected = false,
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
+            icon = { Icon(Icons.Default.RestaurantMenu, null) },
+            label = { Text("Nutrition") }
+
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Progress */ },
+            onClick = { navController.navigate(ROUT_PROGRESS) },
             icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
             label = { Text("Progress") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Profile */ },
-            icon = { Icon(Icons.Default.Person, null) },
-            label = { Text("Profile") }
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
     }
 }

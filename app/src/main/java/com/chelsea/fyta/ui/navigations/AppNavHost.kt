@@ -13,12 +13,14 @@ import com.chelsea.fyta.ui.screens.auth.LoginScreen
 import com.chelsea.fyta.ui.screens.auth.RegisterScreen
 import com.chelsea.fyta.ui.screens.calorie.CalorieTrackerScreen
 import com.chelsea.fyta.ui.screens.goal.GoalScreen
+import com.chelsea.fyta.ui.screens.help.HelpSupportScreen
 import com.chelsea.fyta.ui.screens.home.HomeScreen
 import com.chelsea.fyta.ui.screens.location.LocationScreen
 import com.chelsea.fyta.ui.screens.notification.NotificationsScreen
 import com.chelsea.fyta.ui.screens.onboarding.OnboardingScreen
 import com.chelsea.fyta.ui.screens.profile.ProfileScreen
 import com.chelsea.fyta.ui.screens.progress.ProgressScreen
+import com.chelsea.fyta.ui.screens.settings.SettingsScreen
 import com.chelsea.fyta.ui.screens.social.SocialScreen
 import com.chelsea.fyta.ui.screens.splash.SplashScreen
 import com.chelsea.fyta.ui.screens.steptracker.StepTrackerScreen
@@ -92,6 +94,14 @@ fun AppNavHost(
 
         composable(ROUT_ADMIN)
         { AdminScreen(navController) }
+
+        composable(ROUT_HELP)
+        { HelpSupportScreen(navController) }
+
+        composable(ROUT_SETTINGS)
+        { SettingsScreen(navController) }
+
+
 
 
 

@@ -75,6 +75,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material.icons.filled.Settings
 import com.chelsea.fyta.ui.navigations.*
 
@@ -129,14 +130,19 @@ fun HomeScreen(
                     }
                     DrawerItem(icon = Icons.Default.FitnessCenter, label = "Goals") {
                         scope.launch { drawerState.close() }
-                        navController.navigate(ROUT_GOAL)}
-
+                        navController.navigate(ROUT_GOAL)
+                    }
                     DrawerItem(icon = Icons.AutoMirrored.Filled.DirectionsWalk, label = "Step tracker") {
                         scope.launch { drawerState.close() }
                         navController.navigate(ROUT_STEPTRACKER)
                     }
+                    DrawerItem(icon = Icons.Default.Settings, label = "Settings") {
+                        scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_SETTINGS)
+                    }
                     DrawerItem(icon = Icons.Default.Info, label = "Help & Support") {
                         scope.launch { drawerState.close() }
+                        navController.navigate(ROUT_HELP)
 
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -362,7 +368,7 @@ fun OverviewCard(
         Card(
 
             modifier = Modifier.width(110.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray)
 
         ) {
@@ -666,17 +672,17 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("workout") },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = { Icon(Icons.Default.FitnessCenter, null) },
             label = { Text("Workouts") }
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("nutrition") },
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
             icon = {
                 Icon(
-                    Icons.Default.Restaurant,
+                    Icons.Default.RestaurantMenu,
                     null
                 )
             },
@@ -685,7 +691,7 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("progress") },
+            onClick = { navController.navigate(ROUT_PROGRESS) },
             icon = { Icon(Icons.Default.BarChart, null) },
             label = { Text("Progress") }
         )

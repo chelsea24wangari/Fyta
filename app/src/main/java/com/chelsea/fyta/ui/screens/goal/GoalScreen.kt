@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,14 +28,29 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun GoalScreen(navController: NavController) {
 
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) },
+        bottomBar = {
+            BottomNavigationBar(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+            ) },
         containerColor = Color(0xFFFBFBFF)
 
     ) { paddingValues ->
@@ -542,7 +558,11 @@ fun KeepGoingCard() {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
     NavigationBar(
         containerColor = Color.White,
         tonalElevation = 8.dp
@@ -551,40 +571,52 @@ fun BottomNavigationBar(navController: NavController) {
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
             label = { Text("Home", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate(ROUT_HOME) }
         )
         NavigationBarItem(
             icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
+               Icon(Icons.Default.RestaurantMenu, contentDescription = "Nutrition")
             },
             label = { Text("Nutrition", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.FitnessCenter, contentDescription = "Workouts") },
             label = { Text("Workouts", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate(ROUT_WORKOUT) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Timeline, contentDescription = "Progress") },
+            icon = { Icon(Icons.Default.ShowChart, contentDescription = "Progress") },
             label = { Text("Progress", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = {navController.navigate(ROUT_PROGRESS) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF6C63FF)) },
-            label = { Text("Profile", fontSize = 10.sp, color = Color(0xFF6C63FF)) },
-            selected = true,
-            onClick = { }
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
+
     }
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable

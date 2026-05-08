@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,16 +28,30 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SocialScreen(navController: NavController) {
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
 
     Scaffold(
-        bottomBar = { SocialBottomNavigation() }
+        bottomBar = {
+            SocialBottomNavigation(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+            ) }
 
     ) { paddingValues ->
 
@@ -69,7 +84,8 @@ fun SocialScreen(navController: NavController) {
                 Text(
                     text = "Social Challenges",
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
 
 
@@ -83,15 +99,15 @@ fun SocialScreen(navController: NavController) {
                         }
                     ) {
 
-                        Icon(Icons.Outlined.Notifications, contentDescription = "Notifications")
+                        Icon(Icons.Outlined.Notifications, contentDescription = "Notifications", tint = Color.Black)
 
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(7.dp))
 
 
                     IconButton(onClick = { }) {
 
-                        Icon(Icons.Outlined.PersonAdd, contentDescription = "Add Friend")
+                        Icon(Icons.Outlined.PersonAdd, contentDescription = "Add Friend", tint = Color.Black)
                     }
                 }
             }
@@ -200,8 +216,8 @@ fun SocialScreen(navController: NavController) {
 
 
                             Column {
-                                Text("Step Competition", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                Text("Goal: 15,000 steps", fontSize = 13.sp, color = Color.Gray)
+                                Text("Step Competition", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
+                                Text("Goal: 15,000 steps", fontSize = 13.sp, color = Color.Black)
                             }
                         }
 
@@ -243,8 +259,8 @@ fun SocialScreen(navController: NavController) {
                         }
 
                         Column(horizontalAlignment = Alignment.End) {
-                            Text("15,000", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                            Text("steps", fontSize = 12.sp, color = Color.Gray)
+                            Text("15,000", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.Black)
+                            Text("steps", fontSize = 12.sp, color = Color.Black)
                         }
                     }
 
@@ -525,7 +541,11 @@ fun GroupChallengeItem(title: String, subtitle: String, progress: Float, progres
 }
 
 @Composable
-fun SocialBottomNavigation() {
+fun SocialBottomNavigation(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
 
 
     NavigationBar(
@@ -535,11 +555,34 @@ fun SocialBottomNavigation() {
 
     ) {
 
-        NavigationBarItem(icon = { Icon(Icons.Outlined.Home, null) }, label = { Text("Home", fontSize = 10.sp) }, selected = false, onClick = { })
-        NavigationBarItem(icon = { Icon(Icons.Outlined.FitnessCenter, null) }, label = { Text("Workouts", fontSize = 10.sp) }, selected = false, onClick = { })
-        NavigationBarItem(icon = { Icon(Icons.Outlined.BarChart, null) }, label = { Text("Progress", fontSize = 10.sp) }, selected = false, onClick = { })
-        NavigationBarItem(icon = { Icon(Icons.Default.Groups, null) }, label = { Text("Community", fontSize = 10.sp) }, selected = true, onClick = { }, colors = NavigationBarItemDefaults.colors(selectedIconColor = Purple40, indicatorColor = Color(0xFFF0EEFF)))
-        NavigationBarItem(icon = { Icon(Icons.Outlined.Person, null) }, label = { Text("Profile", fontSize = 10.sp) }, selected = false, onClick = { })
+        NavigationBarItem(icon = { Icon(Icons.Outlined.Home, null) }, label = { Text("Home", fontSize = 10.sp) }, selected = false, onClick = {navController.navigate(
+            ROUT_HOME
+        ) })
+        NavigationBarItem(icon = { Icon(Icons.Default.RestaurantMenu, null) }, label = { Text("Nutrition", fontSize = 10.sp) }, selected = false, onClick = {navController.navigate(
+            ROUT_CALORIETRACKER
+                ) })
+        NavigationBarItem(icon = { Icon(Icons.Outlined.FitnessCenter, null) }, label = { Text("Progress", fontSize = 10.sp) }, selected = false, onClick = { navController.navigate(
+            ROUT_WORKOUT
+        ) })
+        NavigationBarItem(icon = { Icon(Icons.Default.ShowChart, null) }, label = { Text("Progress", fontSize = 10.sp) }, selected = true, onClick = { navController.navigate(ROUT_PROGRESS)}, colors = NavigationBarItemDefaults.colors(selectedIconColor = Purple40, indicatorColor = Color(0xFFF0EEFF)))
+        NavigationBarItem(
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
+        )
     }
 }
 

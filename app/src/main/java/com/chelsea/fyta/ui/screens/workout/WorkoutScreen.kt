@@ -23,11 +23,14 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -37,7 +40,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,11 +53,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple40
-import com.chelsea.fyta.viewmodel.WorkoutViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -60,13 +69,26 @@ fun WorkoutScreen(
     navController: NavController
 ) {
 
-    WorkoutScreenContent(navController)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+
+
+    WorkoutScreenContent(navController, drawerState, scope)
 }
 
 @Composable
-fun WorkoutScreenContent(navController: NavController) {
+fun WorkoutScreenContent(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
     Scaffold(
-        bottomBar = { BottomNavWorkout(navController) }
+        bottomBar = {
+            BottomNavWorkout(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope) }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -493,25 +515,28 @@ fun WorkoutHistory() {
 
 
 @Composable
-fun BottomNavWorkout(navController: NavController) {
+fun BottomNavWorkout(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
 
-    NavigationBar {
+    NavigationBar (containerColor = Color.White) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("home") },
+            onClick = { navController.navigate(ROUT_HOME) },
             icon = { Icon(Icons.Default.Home, null) },
             label = { Text("Home") }
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("nutrition") },
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
             icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                Icon(
+                    Icons.Default.RestaurantMenu,
+                    null
                 )
             },
             label = { Text("Nutrition") }
@@ -519,23 +544,35 @@ fun BottomNavWorkout(navController: NavController) {
 
         NavigationBarItem(
             selected = true,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = {Icon(Icons.Default.FitnessCenter, null)},
             label = { Text("Workouts") }
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("progress") },
+            onClick = { navController.navigate(ROUT_PROGRESS) },
             icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
             label = { Text("Progress") }
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("profile") },
-            icon = { Icon(Icons.Default.Person, null) },
-            label = { Text("Profile") }
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
     }
 }
@@ -594,5 +631,9 @@ fun BottomNavWorkout(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun ServiceScreenPreview() {
-    WorkoutScreenContent(rememberNavController())
+    WorkoutScreenContent(
+        rememberNavController(),
+        rememberDrawerState(initialValue = DrawerValue.Closed),
+        rememberCoroutineScope()
+    )
 }

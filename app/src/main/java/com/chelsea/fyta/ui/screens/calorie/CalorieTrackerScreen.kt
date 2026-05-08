@@ -31,15 +31,26 @@ import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
 import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
 import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
 import com.chelsea.fyta.ui.navigations.ROUT_STEPTRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun CalorieTrackerScreen(navController: NavController) {
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         bottomBar = {
-            BottomNavBarNutrition(navController)
+            BottomNavBarNutrition(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+            )
         }
 
     ) { padding ->
@@ -176,7 +187,7 @@ fun CalorieSummaryCard() {
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
 
     ) {
@@ -471,7 +482,12 @@ fun MotivationCard() {
 }
 
 @Composable
-fun BottomNavBarNutrition(navController: NavController) {
+fun BottomNavBarNutrition(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+
+) {
 
     NavigationBar(containerColor = Color.White) {
 
@@ -484,22 +500,10 @@ fun BottomNavBarNutrition(navController: NavController) {
         )
 
         NavigationBarItem(
-            selected = false,
-            onClick = { /* Navigate to Workouts */ },
-            icon = { Icon(Icons.Default.FitnessCenter, null) },
-            label = { Text("Workouts") }
-
-        )
-
-        NavigationBarItem(
             selected = true,
             onClick = { navController.navigate(ROUT_CALORIETRACKER) },
             icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.RestaurantMenu, null)
             },
             label = { Text("Nutrition") },
             colors = NavigationBarItemDefaults.colors(
@@ -510,23 +514,48 @@ fun BottomNavBarNutrition(navController: NavController) {
 
         )
 
+
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(ROUT_STEPTRACKER) },
-            icon = { Icon(Icons.AutoMirrored.Filled.DirectionsWalk, null) },
-            label = { Text("Activity") }
+            onClick = { navController.navigate(ROUT_WORKOUT) },
+            icon = { Icon(Icons.Default.FitnessCenter, null) },
+            label = { Text("Workouts") }
 
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Profile */ },
-            icon = { Icon(Icons.Default.Person, null) },
-            label = { Text("Profile") }
+            onClick = { navController.navigate(ROUT_PROGRESS) },
+            icon = { Icon(Icons.Default.ShowChart, null) },
+            label = { Text("Progress") }
 
         )
+
+
+
+        NavigationBarItem(
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
+        )
+
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
