@@ -1,4 +1,4 @@
-package com.chelsea.fyta.viewmodel
+package com.chelsea.fyta.data
 
 import android.content.Context
 import android.widget.Toast
@@ -8,10 +8,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.chelsea.fyta.models.Workout
+import com.chelsea.fyta.models.WorkoutSet
 import com.chelsea.fyta.ui.navigations.ROUT_WORKOUTS
 import com.google.firebase.database.*
 
-class WorkoutViewModel() : ViewModel() {
+class WorkoutViewModel : ViewModel() {
 
     // Initialize workouts with a Compose state list
     var workouts by mutableStateOf<List<Workout>>(emptyList())
@@ -21,14 +22,23 @@ class WorkoutViewModel() : ViewModel() {
     private val workoutsRef = database.getReference("Workouts")
 
     //  ADD WORKOUT
-    fun addWorkout(name: String, duration: String, description: String, context: Context, navController: NavController) {
+    fun addWorkout(
+        name: String,
+        duration: String,
+        calories: String,
+        sets: List<WorkoutSet>,
+        context: Context,
+        navController: NavController
+    ) {
         val workoutId = workoutsRef.push().key ?: return
 
         val workout = Workout(
             id = workoutId,
             name = name,
             duration = duration,
-            description = description
+            calories = calories,
+            date = System.currentTimeMillis(),
+            sets = sets
         )
 
         workoutsRef.child(workoutId).setValue(workout)
@@ -65,10 +75,17 @@ class WorkoutViewModel() : ViewModel() {
         id: String,
         name: String,
         duration: String,
-        description: String,
+        calories: String,
+        sets: List<WorkoutSet>,
         context: Context
     ) {
-        val updatedWorkout = Workout(id, name, duration, description)
+        val updatedWorkout = Workout(
+            id = id,
+            name = name,
+            duration = duration,
+            calories = calories,
+            sets = sets
+        )
 
         workoutsRef.child(id).setValue(updatedWorkout)
             .addOnCompleteListener {

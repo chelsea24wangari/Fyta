@@ -37,6 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
 import com.chelsea.fyta.ui.navigations.*
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 data class WeightData(
     val day: String,
@@ -63,8 +65,18 @@ fun ProgressScreen(navController: NavController) {
     val weightChange = calculateWeightChange(weightData)
     val isLoss = weightChange < 0
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+
     Scaffold(
-        bottomBar = { BottomNavProgress(navController) }
+        bottomBar = {
+            BottomNavProgress(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+
+        ) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -193,7 +205,7 @@ fun WeightCard(
 
             Row(verticalAlignment = Alignment.Bottom) {
                 Text("72.4", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                Text(" kg", fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
+                Text(" kg", fontSize = 16.sp, color = Color.Black, modifier = Modifier.padding(bottom = 4.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
@@ -533,8 +545,17 @@ fun BreakdownLegendItem(color: Color, label: String, percentage: String) {
 }
 
 @Composable
-fun BottomNavProgress(navController: NavController) {
+fun BottomNavProgress(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+
+) {
+
+
     NavigationBar(containerColor = Color.White) {
+
+
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(ROUT_HOME) },
@@ -543,41 +564,49 @@ fun BottomNavProgress(navController: NavController) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Activity */ },
-            icon = { Icon(Icons.AutoMirrored.Filled.DirectionsWalk, null) },
-            label = { Text("Activity") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* Navigate to Workouts */ },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = { Icon(Icons.Default.FitnessCenter, null) },
             label = { Text("Workouts") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { },
-            icon = {
-                Image(
-                    painter = painterResource(R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-
-
-                )
-            },
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
+            icon = { Icon(Icons.Default.RestaurantMenu, null) },
             label = { Text("Nutrition") }
         )
         NavigationBarItem(
-            selected = true,
+            selected = false,
             onClick = { navController.navigate(ROUT_PROGRESS) },
-            icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, null) },
-            label = { Text("Progress") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                selectedTextColor = Purple40,
-                indicatorColor = Color(0xFFE8F5E9)
-            )
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Filled.ShowChart,
+                    null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            label = { Text("Progress") }
         )
+
+        NavigationBarItem(
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
+        )
+
+
     }
 }
 

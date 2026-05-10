@@ -561,7 +561,7 @@ fun SocialBottomNavigation(
         NavigationBarItem(icon = { Icon(Icons.Default.RestaurantMenu, null) }, label = { Text("Nutrition", fontSize = 10.sp) }, selected = false, onClick = {navController.navigate(
             ROUT_CALORIETRACKER
                 ) })
-        NavigationBarItem(icon = { Icon(Icons.Outlined.FitnessCenter, null) }, label = { Text("Progress", fontSize = 10.sp) }, selected = false, onClick = { navController.navigate(
+        NavigationBarItem(icon = { Icon(Icons.Outlined.FitnessCenter, null) }, label = { Text("Workout", fontSize = 10.sp) }, selected = false, onClick = { navController.navigate(
             ROUT_WORKOUT
         ) })
         NavigationBarItem(icon = { Icon(Icons.Default.ShowChart, null) }, label = { Text("Progress", fontSize = 10.sp) }, selected = true, onClick = { navController.navigate(ROUT_PROGRESS)}, colors = NavigationBarItemDefaults.colors(selectedIconColor = Purple40, indicatorColor = Color(0xFFF0EEFF)))

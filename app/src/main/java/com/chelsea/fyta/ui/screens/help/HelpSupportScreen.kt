@@ -56,6 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
 import kotlinx.coroutines.CoroutineScope
@@ -175,7 +179,7 @@ fun TopSection(navController: NavController) {
 
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
+                    contentDescription = "Back",
                     tint = Color.White,
                     modifier = Modifier.clickable {
                         navController.popBackStack()
@@ -403,7 +407,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_HOME) },
             icon = {
                 Icon(Icons.Default.Home, null)
             },
@@ -414,7 +418,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = {
                 Icon(Icons.Default.FitnessCenter, null)
             },
@@ -425,7 +429,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
             icon = {
                 Icon(Icons.Default.RestaurantMenu, null)
             },
@@ -436,7 +440,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_PROGRESS) },
             icon = {
                 Icon(Icons.Default.ShowChart, null)
             },

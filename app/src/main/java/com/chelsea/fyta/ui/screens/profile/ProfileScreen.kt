@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.ChevronRight
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
@@ -36,13 +38,17 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.RestaurantMenu
 import androidx.compose.material.icons.outlined.ShowChart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -51,10 +57,13 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +72,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,15 +81,60 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavController) {
 
+    val isPreview = LocalInspectionMode.current
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    var age by remember { mutableStateOf("") }
+    var weight by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var goal by remember { mutableStateOf("") }
+
+    val database = remember { if (isPreview) null else FirebaseDatabase.getInstance().reference }
+    val userId = remember { if (isPreview) null else FirebaseAuth.getInstance().currentUser?.uid }
+
+    LaunchedEffect(Unit) {
+
+        if (userId != null && database != null) {
+
+            database.child("users")
+                .child(userId)
+                .get()
+                .addOnSuccessListener {
+
+                    age = it.child("age").value.toString()
+                    weight = it.child("weight").value.toString()
+                    height = it.child("height").value.toString()
+                    goal = it.child("goal").value.toString()
+                }
+        }
+    }
+
+
     Scaffold(
 
-        bottomBar = { BottomNavProfile() }
+        bottomBar = {
+            BottomNavProfile(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+
+
+            ) }
     ) { padding ->
 
         LazyColumn(
@@ -100,6 +155,10 @@ fun ProfileScreen(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically
 
                 ) {
+
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.Black)
+                    }
 
                     Text(
                         text = "Profile",
@@ -459,7 +518,12 @@ fun DarkModeItem() {
 }
 
 @Composable
-fun BottomNavProfile() {
+fun BottomNavProfile(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+
+) {
 
 
     NavigationBar(
@@ -470,7 +534,7 @@ fun BottomNavProfile() {
 
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = {navController.navigate(ROUT_HOME)},
             icon = { Icon(Icons.Outlined.Home, null) },
             label = { Text("Home", fontSize = 12.sp) },
             colors = NavigationBarItemDefaults.colors(
@@ -482,29 +546,10 @@ fun BottomNavProfile() {
             )
         )
 
-        NavigationBarItem(
-            selected = false,
-            onClick = {},
-            icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                   },
-            label = { Text("Nutrition", fontSize = 12.sp) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                unselectedIconColor = Color.Gray,
-                selectedTextColor = Purple40,
-                unselectedTextColor = Color.Gray,
-                indicatorColor = Color.Transparent
-            )
-        )
 
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = {navController.navigate(ROUT_WORKOUT)},
             icon = { Icon(Icons.Outlined.FitnessCenter, null) },
             label = { Text("Workouts", fontSize = 12.sp) },
             colors = NavigationBarItemDefaults.colors(
@@ -518,7 +563,23 @@ fun BottomNavProfile() {
 
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = {navController.navigate(ROUT_CALORIETRACKER)},
+            icon = {
+                Icon(Icons.Outlined.RestaurantMenu, null)
+            },
+            label = { Text("Nutrition", fontSize = 12.sp) },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = Purple40,
+                unselectedIconColor = Color.Gray,
+                selectedTextColor = Purple40,
+                unselectedTextColor = Color.Gray,
+                indicatorColor = Color.Transparent
+            )
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = {navController.navigate(ROUT_PROGRESS)},
             icon = { Icon(Icons.Outlined.ShowChart, null) },
             label = { Text("Progress", fontSize = 12.sp) },
             colors = NavigationBarItemDefaults.colors(
@@ -531,18 +592,25 @@ fun BottomNavProfile() {
         )
 
         NavigationBarItem(
-            selected = true,
-            onClick = {},
-            icon = { Icon(Icons.Default.Person, null, modifier = Modifier.size(26.dp)) },
-            label = { Text("Profile", fontSize = 12.sp) },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                unselectedIconColor = Color.Gray,
-                selectedTextColor = Purple40,
-                unselectedTextColor = Color.Gray,
-                indicatorColor = Color.Transparent
-            )
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
+
+
     }
 }
 

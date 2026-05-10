@@ -38,6 +38,8 @@ import com.chelsea.fyta.ui.navigations.ROUT_HOME
 import com.chelsea.fyta.ui.theme.Purple20
 import com.chelsea.fyta.ui.theme.Purple40
 import java.util.Locale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun OnboardingScreen(navController: NavController) {
@@ -314,7 +316,26 @@ fun OnboardingScreen(navController: NavController) {
 
         // Bottom Button
         Button(
-            onClick = {navController.navigate(ROUT_HOME)},
+            onClick = {
+                val database = FirebaseDatabase.getInstance().reference
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+                val userData = mapOf(
+                    "age" to age,
+                    "weight" to weight,
+                    "height" to height,
+                    "goal" to selectedGoal
+                )
+
+                if (userId != null) {
+                    database.child("users")
+                        .child(userId)
+                        .setValue(userData)
+                        .addOnSuccessListener {
+                            navController.navigate(ROUT_HOME)
+                        }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

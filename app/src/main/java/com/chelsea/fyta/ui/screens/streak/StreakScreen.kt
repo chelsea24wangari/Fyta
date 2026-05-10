@@ -45,14 +45,25 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun StreakScreen(navController: NavController) {
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     Scaffold(
 
-        bottomBar = { BottomNav(navController) }
+        bottomBar = {
+            BottomNav(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+        ) }
     ) { padding ->
 
         Column(
@@ -777,7 +788,13 @@ fun MotivationBanner() {
 }
 
 @Composable
-fun BottomNav(navController: NavController) {
+fun BottomNav(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+
+
+) {
 
     NavigationBar(containerColor = Color.White) {
 
@@ -791,7 +808,7 @@ fun BottomNav(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Workouts */ },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = { Icon(Icons.Default.FitnessCenter, null) },
             label = { Text("Workouts") }
 
@@ -801,11 +818,7 @@ fun BottomNav(navController: NavController) {
             selected = false,
             onClick = { navController.navigate(ROUT_CALORIETRACKER) },
             icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.RestaurantMenu, null)
             },
             label = { Text("Nutrition") }
 
@@ -826,17 +839,24 @@ fun BottomNav(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { /* Navigate to Profile */ },
-            icon = { Icon(Icons.Default.Person, null) },
-            label = { Text("Profile") },
 
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                selectedTextColor = Purple40,
-                indicatorColor = Color(0xFFF0EFFF)
-            )
+            onClick = {
 
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
+
+
     }
 }
 

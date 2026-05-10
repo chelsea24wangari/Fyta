@@ -42,7 +42,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import com.chelsea.fyta.models.Workout
+import com.chelsea.fyta.models.WorkoutSet
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +77,8 @@ import com.chelsea.fyta.ui.navigations.ROUT_HOME
 import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
 import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.theme.Purple40
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -68,11 +87,8 @@ import kotlinx.coroutines.launch
 fun WorkoutScreen(
     navController: NavController
 ) {
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-
 
     WorkoutScreenContent(navController, drawerState, scope)
 }
@@ -189,125 +205,180 @@ fun TabItem(title: String, selected: Boolean) {
 @Composable
 fun LogWorkoutCard() {
 
+    val isPreview = LocalInspectionMode.current
+    var title by remember { mutableStateOf("") }
+    var duration by remember { mutableStateOf("") }
+    var calories by remember { mutableStateOf("") }
+    val sets = remember { mutableStateListOf(WorkoutSet(weight = "", reps = "")) }
+
+    val database = remember { if (isPreview) null else FirebaseDatabase.getInstance().reference }
+    val userId = remember { if (isPreview) null else FirebaseAuth.getInstance().currentUser?.uid }
+
     Card(
         modifier = Modifier.padding(16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.LightGray)
-
     ) {
-
         Column(modifier = Modifier.padding(16.dp)) {
-
-
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
-
             ) {
-
                 Text("Log a Workout", fontWeight = FontWeight.Bold, color = Color.Black)
                 Text("View Exercises", color = Purple40)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Workout Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = duration,
+                    onValueChange = { duration = it },
+                    label = { Text("Duration (min)") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedTextField(
+                    value = calories,
+                    onValueChange = { calories = it },
+                    label = { Text("Calories") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Exercises", fontWeight = FontWeight.Bold, color = Color.Black)
+            
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row {
-
                 Image(
                     painter = painterResource(id = R.drawable.gym1),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(60.dp)
                         .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-
                 Column {
                     Text("Dumbbell Bench Press", fontWeight = FontWeight.Bold, color = Color.Black)
-                    Text("Chest • Compound", color = Color.Black)
+                    Text("Chest • Compound", color = Color.Gray, fontSize = 12.sp)
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             // Sets
-
-            repeat(3) { index ->
-                SetRow(set = index + 1)
+            sets.forEachIndexed { index, set ->
+                SetRow(
+                    setNumber = index + 1,
+                    weight = set.weight,
+                    reps = set.reps,
+                    onWeightChange = { newWeight ->
+                        sets[index] = sets[index].copy(weight = newWeight)
+                    },
+                    onRepsChange = { newReps ->
+                        sets[index] = sets[index].copy(reps = newReps)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-
             OutlinedButton(
-                onClick = {},
+                onClick = { sets.add(WorkoutSet(weight = "", reps = "")) },
                 modifier = Modifier.fillMaxWidth()
-
             ) {
-
                 Text("+ Add Set")
-
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             Button(
-                onClick = {},
+                onClick = {
+                    if (userId != null && database != null && title.isNotEmpty()) {
+                        val workoutId = database.child("workouts").child(userId).push().key!!
+                        val workout = Workout(
+                            id = workoutId,
+                            name = title,
+                            duration = duration,
+                            calories = calories,
+                            date = System.currentTimeMillis(),
+                            sets = sets.toList()
+                        )
+
+                        database.child("workouts")
+                            .child(userId)
+                            .child(workoutId)
+                            .setValue(workout)
+                            .addOnSuccessListener {
+                                title = ""
+                                duration = ""
+                                calories = ""
+                                sets.clear()
+                                sets.add(WorkoutSet("", ""))
+                            }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Purple40
-
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = Purple40)
             ) {
-
                 Text("Finish Workout", color = Color.White)
-
             }
         }
     }
 }
 
-
-
 @Composable
-fun SetRow(set: Int) {
-
+fun SetRow(
+    setNumber: Int,
+    weight: String,
+    reps: String,
+    onWeightChange: (String) -> Unit,
+    onRepsChange: (String) -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-
     ) {
-
-        Text("$set", modifier = Modifier.width(30.dp))
+        Text("$setNumber", modifier = Modifier.width(30.dp), fontWeight = FontWeight.Bold)
 
         OutlinedTextField(
-            value = "20",
-            onValueChange = {},
+            value = weight,
+            onValueChange = onWeightChange,
             modifier = Modifier.weight(1f),
             label = { Text("Weight") },
-            colors = OutlinedTextFieldDefaults.colors(Color.Black)
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
         OutlinedTextField(
-            value = "10",
-            onValueChange = {},
+            value = reps,
+            onValueChange = onRepsChange,
             modifier = Modifier.weight(1f),
-            label = { Text("Reps") }
+            label = { Text("Reps") },
+            singleLine = true
         )
+
+        Spacer(modifier = Modifier.width(8.dp))
 
         Icon(
             Icons.Default.CheckCircle,
             contentDescription = null,
             tint = Purple40
-
         )
     }
 }
@@ -442,73 +513,55 @@ fun HistoryItem(
 
 @Composable
 fun WorkoutHistory() {
+    val isPreview = LocalInspectionMode.current
+    val database = remember { if (isPreview) null else FirebaseDatabase.getInstance().reference }
+    val userId = remember { if (isPreview) null else FirebaseAuth.getInstance().currentUser?.uid }
+    val historyList = remember { mutableStateListOf<Workout>() }
 
-    data class WorkoutHistoryData(
-        val title: String,
-        val date: String,
-        val exercises: String,
-        val imageRes: Int,
-        val duration: String,
-        val calories: String
-    )
+    LaunchedEffect(userId) {
+        if (userId != null && database != null) {
+            database.child("workouts").child(userId)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        historyList.clear()
+                        for (snap in snapshot.children) {
+                            val workout = snap.getValue(Workout::class.java)
+                            workout?.let { historyList.add(it) }
+                        }
+                        // Sort by date descending
+                        historyList.sortByDescending { it.date }
+                    }
 
-    val historyList = listOf(
-        WorkoutHistoryData(
-            title = "Push Day",
-            date = "May 19",
-            exercises = "6 Exercises",
-            imageRes = R.drawable.work2,
-            duration = "45 min",
-            calories = "320 kcal"
-        ),
-        WorkoutHistoryData(
-            title = "Leg Day",
-            date = "July 11",
-            exercises = "7 Exercises",
-            imageRes = R.drawable.work3,
-            duration = "50 min",
-            calories = "410 kcal"
-        ),
-        WorkoutHistoryData(
-            title = "Muscle Gain",
-            date = "Jan 17",
-            exercises = "4 Exercises",
-            imageRes = R.drawable.work1,
-            duration = "40 min",
-            calories = "280 kcal"
-        ),
-        WorkoutHistoryData(
-            title = "Chest Gain",
-            date = "Aug 7",
-            exercises = "5 Exercises",
-            imageRes = R.drawable.gym1,
-            duration = "35 min",
-            calories = "300 kcal"
-        )
-    )
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
+    }
 
     Column(modifier = Modifier.padding(16.dp)) {
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Workout History", fontWeight = FontWeight.Bold, color = Color.Black)
-            Text("View All", color = Color(0xFF6C4EF6))
+            Text("View All", color = Purple40)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        historyList.forEach { item ->
-
-            HistoryItem(
-                title = item.title,
-                date = item.date,
-                exercises = item.exercises,
-                imageRes = item.imageRes,
-                duration = item.duration,
-                calories = item.calories,
-            )
+        if (historyList.isEmpty()) {
+            Text("No workout history yet.", color = Color.Gray, modifier = Modifier.padding(vertical = 16.dp))
+        } else {
+            historyList.forEach { workout ->
+                val dateStr = SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(workout.date))
+                HistoryItem(
+                    title = workout.name,
+                    date = dateStr,
+                    exercises = "${workout.sets.size} Sets",
+                    imageRes = R.drawable.gym1, // Default image
+                    duration = "${workout.duration} min",
+                    calories = "${workout.calories} kcal"
+                )
+            }
         }
     }
 }

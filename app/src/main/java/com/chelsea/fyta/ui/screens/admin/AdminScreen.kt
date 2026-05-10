@@ -15,21 +15,33 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
 import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
+import com.chelsea.fyta.ui.screens.home.HomeScreen
 import com.chelsea.fyta.ui.theme.Purple40
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(navController: NavController) {
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
 
     Scaffold(
@@ -75,7 +87,13 @@ fun AdminScreen(navController: NavController) {
             )
         },
 
-        bottomBar = { AdminBottomNavigation() }
+        bottomBar = {
+            AdminBottomNavigation(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+
+        ) }
 
     ) { paddingValues ->
 
@@ -92,9 +110,9 @@ fun AdminScreen(navController: NavController) {
 
             Text(
                 text = "OVERVIEW",
-                fontSize = 12.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Gray,
+                color = Color.Black,
                 modifier = Modifier.padding(bottom = 12.dp)
 
             )
@@ -235,8 +253,8 @@ fun OverviewCard(title: String, count: String, icon: ImageVector, modifier: Modi
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            Text(text = count, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(text = title, fontSize = 11.sp, color = Color.Gray)
+            Text(text = count, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
+            Text(text = title, fontSize = 11.sp, color = Color.Black)
 
         }
     }
@@ -287,8 +305,8 @@ fun QuickActionItem(
 
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 15.sp)
-                Text(text = subtitle, fontSize = 12.sp, color = Color.Gray)
+                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.Black)
+                Text(text = subtitle, fontSize = 12.sp, color = Color.Black)
 
             }
 
@@ -298,45 +316,74 @@ fun QuickActionItem(
 }
 
 @Composable
-fun AdminBottomNavigation() {
-    NavigationBar(
-        containerColor = Color.White,
-        tonalElevation = 8.dp
-    ) {
+fun AdminBottomNavigation(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
+
+    NavigationBar (containerColor = Color.White) {
 
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Home, contentDescription = "Home") },
-            label = { Text("Home") },
-            selected = false,
-            onClick = { }
-
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Outlined.FitnessCenter, contentDescription = "Workouts") },
-            label = { Text("Workouts") },
-            selected = false,
-            onClick = { }
-
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Timeline, contentDescription = "Activity") },
-            label = { Text("Activity") },
-            selected = false,
-            onClick = { }
-
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Shield, contentDescription = "Admin") },
-            label = { Text("Admin") },
             selected = true,
-            onClick = { },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                indicatorColor = Color(0xFFF0EEFF)
-            )
+            onClick = { navController.navigate("home") },
+            icon = { Icon(Icons.Default.Home, null) },
+            label = { Text("Home") }
         )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate(ROUT_WORKOUT) },
+            icon = { Icon(Icons.Default.FitnessCenter, null) },
+            label = { Text("Workouts") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
+            icon = {
+                Icon(
+                    Icons.Default.RestaurantMenu,
+                    null
+                )
+            },
+            label = { Text("Nutrition") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = { navController.navigate(ROUT_PROGRESS) },
+            icon = { Icon(Icons.Default.BarChart, null) },
+            label = { Text("Progress") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
+        )
+
     }
 }
+
+
+@Preview (showBackground =true)
+@Composable
+fun AdminScreenPreview(){
+    AdminScreen(rememberNavController())
+}
+
+

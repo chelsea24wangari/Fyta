@@ -197,7 +197,7 @@ fun RegisterScreen(navController: NavController) {
 
                                         Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
 
-                                        navController.navigate(ROUT_HOME) {
+                                        navController.navigate(ROUT_ONBOARDING) {
                                             popUpTo(0)
                                         }
                                     }

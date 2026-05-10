@@ -122,7 +122,7 @@ fun HomeScreen(
                     }
                     DrawerItem(icon = Icons.Default.LocationOn, label = "Location") {
                         scope.launch { drawerState.close() }
-                        navController.navigate(ROUT_LOCATION)
+                        navController.navigate(ROUT_ADMIN)
                     }
                     DrawerItem(icon = Icons.Default.Group, label = "Social Challenges") {
                         scope.launch { drawerState.close() }
@@ -157,7 +157,7 @@ fun HomeScreen(
         Scaffold(
             bottomBar = {
                 BottomNavBar(
-                    navController = navController,
+                  navController = navController,
                     drawerState = drawerState,
                     scope = scope
                 )
@@ -367,8 +367,8 @@ fun OverviewCard(
 
         Card(
 
-            modifier = Modifier.width(110.dp),
-            shape = RoundedCornerShape(18.dp),
+            modifier = Modifier.width(113.dp),
+            shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray)
 
         ) {
@@ -661,7 +661,7 @@ fun BottomNavBar(
     scope: CoroutineScope
 ) {
 
-    NavigationBar {
+    NavigationBar (containerColor = Color.White) {
 
         NavigationBarItem(
             selected = true,

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,20 +29,37 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.chelsea.fyta.R
+import com.chelsea.fyta.ui.navigations.ROUT_CALORIETRACKER
+import com.chelsea.fyta.ui.navigations.ROUT_HOME
+import com.chelsea.fyta.ui.navigations.ROUT_PROGRESS
+import com.chelsea.fyta.ui.navigations.ROUT_SETTINGS
+import com.chelsea.fyta.ui.navigations.ROUT_WORKOUT
 import com.chelsea.fyta.ui.screens.goal.BottomNavigationBar
 import com.chelsea.fyta.ui.theme.Purple40
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LocationScreen(navController: NavController) {
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+
+
     Scaffold(
 
         bottomBar = {
-            BottomNavigationBar(navController)
+            BottomNavigationBar(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+
+            )
 
         }
     ) { paddingValues ->
@@ -420,7 +438,11 @@ fun AddGymCard() {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
 
     NavigationBar(
         containerColor = Color.White,
@@ -430,7 +452,7 @@ fun BottomNavigationBar(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_HOME) },
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
             label = { Text("Home") },
             colors = NavigationBarItemDefaults.colors(
@@ -441,7 +463,7 @@ fun BottomNavigationBar(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
+            onClick = { navController.navigate(ROUT_WORKOUT) },
             icon = { Icon(Icons.Default.FitnessCenter, contentDescription = "Workouts") },
             label = { Text("Workouts") },
             colors = NavigationBarItemDefaults.colors(
@@ -451,21 +473,17 @@ fun BottomNavigationBar(navController: NavController) {
         )
 
         NavigationBarItem(
-            selected = true,
-            onClick = { },
-            icon = { Icon(Icons.Default.LocationOn, contentDescription = "Location") },
-            label = { Text("Location") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Purple40,
-                selectedTextColor = Purple40,
-                indicatorColor = Color(0xFFF3E8FF)
-            )
+            selected = false,
+            onClick = { navController.navigate(ROUT_CALORIETRACKER) },
+            icon = { Icon(Icons.Default.RestaurantMenu, contentDescription = "Location") },
+            label = { Text("Nutrition") }
+
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
-            icon = { Icon(Icons.Default.BarChart, contentDescription = "Progress") },
+            onClick = { navController.navigate(ROUT_PROGRESS) },
+            icon = { Icon(Icons.Default.ShowChart, contentDescription = "Progress") },
             label = { Text("Progress") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = Color.Gray,
@@ -475,13 +493,21 @@ fun BottomNavigationBar(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { },
-            icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
-            label = { Text("Profile") },
-            colors = NavigationBarItemDefaults.colors(
-                unselectedIconColor = Color.Gray,
-                unselectedTextColor = Color.Gray
-            )
+
+            onClick = {
+
+                scope.launch {
+                    drawerState.open()
+                }
+            },
+
+            icon = {
+                Icon(Icons.Default.MoreHoriz, null)
+            },
+
+            label = {
+                Text("More")
+            }
         )
     }
 }
