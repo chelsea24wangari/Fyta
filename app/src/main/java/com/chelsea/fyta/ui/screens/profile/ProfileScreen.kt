@@ -92,6 +92,12 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+data class UserProfile(
+    val age: String = "",
+    val height: String = "",
+    val weight: String = ""
+)
+
 @Composable
 fun ProfileScreen(navController: NavController) {
 
@@ -99,27 +105,24 @@ fun ProfileScreen(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    var age by remember { mutableStateOf("") }
-    var weight by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var goal by remember { mutableStateOf("") }
+    var userProfile by remember { mutableStateOf(UserProfile()) }
+
+
 
     val database = remember { if (isPreview) null else FirebaseDatabase.getInstance().reference }
     val userId = remember { if (isPreview) null else FirebaseAuth.getInstance().currentUser?.uid }
 
     LaunchedEffect(Unit) {
-
         if (userId != null && database != null) {
-
             database.child("users")
                 .child(userId)
                 .get()
-                .addOnSuccessListener {
-
-                    age = it.child("age").value.toString()
-                    weight = it.child("weight").value.toString()
-                    height = it.child("height").value.toString()
-                    goal = it.child("goal").value.toString()
+                .addOnSuccessListener { snapshot ->
+                    userProfile = UserProfile(
+                        age = snapshot.child("age").value?.toString() ?: "",
+                        height = snapshot.child("height").value?.toString() ?: "",
+                        weight = snapshot.child("weight").value?.toString() ?: ""
+                    )
                 }
         }
     }
@@ -189,7 +192,13 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
 
-            item { ProfileHeader() }
+            item {
+                ProfileHeader(
+                    age = userProfile.age,
+                    height = userProfile.height,
+                    weight = userProfile.weight
+                )
+            }
 
             item { SectionTitle("Personal Info") }
 
@@ -235,7 +244,11 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun ProfileHeader() {
+fun ProfileHeader(
+    age: String,
+    height: String,
+    weight: String
+){
 
     Card(
         modifier = Modifier
@@ -335,24 +348,17 @@ fun ProfileHeader() {
 
                 ) {
 
-                    ProfileStat("28", "Age")
+                    ProfileStat(age.ifEmpty { "--" }, "Age")
 
-                    VerticalDivider(
-                        modifier = Modifier.height(30.dp),
-                        color = Color.White.copy(alpha = 0.3f),
-                        thickness = 1.dp
+                    ProfileStat(
+                        if (height.isNotEmpty()) "$height cm" else "--",
+                        "Height"
                     )
 
-                    ProfileStat("178 cm", "Height")
-
-                    VerticalDivider(
-                        modifier = Modifier.height(30.dp),
-                        color = Color.White.copy(alpha = 0.3f),
-                        thickness = 1.dp
-
+                    ProfileStat(
+                        if (weight.isNotEmpty()) "$weight kg" else "--",
+                        "Weight"
                     )
-
-                    ProfileStat("75 kg", "Weight")
                 }
             }
         }
